@@ -1,0 +1,34 @@
+/* Site Main CSS */
+
+:root {
+  --primary-color: #1b4ca0;
+}
+
+
+/* sidebar background color */
+
+.w3-sidebar {
+	background: var(--primary-color);
+}
+
+/* Hover color */
+
+.w3-ul li:hover {
+	background: var(--primary-color) !important;
+	color: #fff;	
+}
+
+p {
+	font-weight: normal;
+}
+
+
+nav ul {
+	list-style-type: lower-alpha;
+	font-weight: normal;
+}
+
+nav ul li{
+	line-height:1.5 ;
+	margin-bottom:10px ;
+}

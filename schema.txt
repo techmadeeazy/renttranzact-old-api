@@ -1,0 +1,145 @@
+-- Adminer 4.6.3 MySQL dump
+
+SET NAMES utf8;
+SET time_zone = '+00:00';
+SET foreign_key_checks = 0;
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+
+SET NAMES utf8mb4;
+
+CREATE TABLE `claims` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` varchar(25) DEFAULT NULL,
+  `tracking_number` varchar(30) NOT NULL,
+  `policy_number` varchar(25) DEFAULT NULL,
+  `fnol` varchar(25) DEFAULT NULL,
+  `claim_number` varchar(25) DEFAULT NULL,
+  `claim_data` json DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `contactus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `contact_owner` varchar(25) DEFAULT NULL,
+  `contact_name` varchar(30) NOT NULL,
+  `contact_email` varchar(25) DEFAULT NULL,
+  `contact_phone` varchar(25) DEFAULT NULL,
+  `contact_enquiry` text,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `countries` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `short_title` varchar(50) DEFAULT NULL,
+  `long_title` varchar(150) DEFAULT NULL,
+  `country_code` varchar(25) DEFAULT NULL,
+  `capital` varchar(150) DEFAULT NULL,
+  `iso2` varchar(2) DEFAULT NULL,
+  `iso3` varchar(3) DEFAULT NULL,
+  `currency` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uri` varchar(255) NOT NULL,
+  `method` varchar(6) NOT NULL,
+  `params` text,
+  `api_key` varchar(40) NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `time` int(11) NOT NULL,
+  `rtime` float DEFAULT NULL,
+  `authorized` varchar(1) NOT NULL,
+  `response_code` smallint(3) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `policies` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` varchar(25) DEFAULT NULL,
+  `policy_number` varchar(25) DEFAULT NULL,
+  `policy_data` text,
+  `modified` datetime DEFAULT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `policy_number` (`policy_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `policy_sales` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `policy_number` varchar(25) DEFAULT NULL,
+  `marketer` varchar(50) DEFAULT NULL,
+  `marketer_code` varchar(15) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `premium_amount` double NOT NULL DEFAULT '0',
+  `sum_insured` double NOT NULL DEFAULT '0',
+  `product_code` varchar(25) DEFAULT NULL,
+  `inception_date` date DEFAULT NULL,
+  `created` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `policy_number` (`policy_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `raw_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) NOT NULL,
+  `body` text NOT NULL,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(25) NOT NULL,
+  `first_name` varchar(25) NOT NULL,
+  `last_name` varchar(25) NOT NULL,
+  `pwd` varchar(50) DEFAULT NULL,
+  `email_address` varchar(100) DEFAULT NULL,
+  `phone` varchar(25) DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  `gender` varchar(6) DEFAULT NULL,
+  `user_type_id` int(11) NOT NULL DEFAULT '0',
+  `country_id` int(11) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime DEFAULT NULL,
+  `account_id` varchar(255) DEFAULT NULL,
+  `secret_seed` varchar(255) DEFAULT NULL,
+  `federated_address` varchar(255) DEFAULT NULL,
+  `default_currency` varchar(255) NOT NULL,
+  `default_currency_country_code` varchar(2) DEFAULT NULL,
+  `pin` varchar(255) DEFAULT NULL,
+  `has_multisig` tinyint(4) NOT NULL DEFAULT '0',
+  `email_verified` tinyint(4) NOT NULL DEFAULT '0',
+  `kyc_verified` tinyint(4) NOT NULL DEFAULT '0',
+  `phone_verified` tinyint(4) NOT NULL DEFAULT '0',
+  `password` varchar(255) DEFAULT NULL,
+  `is_migrated` tinyint(4) DEFAULT '0',
+  `is_blocked` tinyint(4) NOT NULL DEFAULT '0',
+  `referrer_username` varchar(25) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_type_id` (`user_type_id`),
+  KEY `country_id` (`country_id`),
+  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`user_type_id`) REFERENCES `user_types` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `users_ibfk_2` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `user_types` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(25) DEFAULT NULL,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- 2021-03-20 08:37:44
