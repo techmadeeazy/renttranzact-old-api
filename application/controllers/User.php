@@ -38,4 +38,27 @@ class User extends REST_Controller
 
         $this->response(['status' => 'success', 'data' => ['user_auth_id' => $id]]);
     }
+
+    /**
+     * Create/Update a user profile
+     */
+    public function profile_post()
+    {
+        $this->load->model('UserProfile_model');
+        $data = ['user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender')];
+        $id = $this->UserProfile_model->insertData($data);
+
+        $this->response(['status' => 'success', 'data' => ['user_profile_id' => $id]]);
+    }
+
+    public function profile_get($userAuthId)
+    {
+        $this->load->model('UserAuth_model');
+        $this->load->model('UserProfile_model');
+    $userAuthData =  $this->UserAuth_model->getById($userAuthId);
+    $profileData = $this->UserProfile_model->getBy($userAuthId,'user_auth_id');
+    unset($userAuthData['pwd']);
+    $this->response(['status' => 'success', 'data' => array_merge($userAuthData,$profileData)]);
+
+    }
 }

@@ -27,7 +27,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /** @var type $_SERVER */
 //$protocol = is_https() ? 'https://' : 'http://';
 $protocol = 'http://';
-$config['base_url'] = $protocol.$_SERVER['HTTP_HOST'].'/api_hub/';
+$config['base_url'] = $protocol.$_SERVER['HTTP_HOST'].'/api/';
 
 /*
 |--------------------------------------------------------------------------
