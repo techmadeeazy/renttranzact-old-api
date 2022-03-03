@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => 'db-mysql-lon1-39418-do-user-10890328-0.b.db.ondigitalocean.com:25060',
 	'username' => '',
-	'password' => 'j[YjDYvLQsyG',
-	'database' => 'expertfi_apihub',
+	'password' => 'b75cZiqr2ztlpswG',
+	'database' => 'rtrans_staging',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
