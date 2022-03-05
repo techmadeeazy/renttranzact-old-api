@@ -62,9 +62,16 @@ class User extends REST_Controller
     {
         $this->load->model('UserProfile_model');
         $data = ['user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender')];
-        $id = $this->UserProfile_model->insertData($data);
 
-        $this->response(['status' => 'success', 'data' => ['user_profile_id' => $id]]);
+        //confirm that profile does not initially exist
+        $userProfileData = $this->UserProfile_model->getBy($this->post('user_auth_id'), $this->post('user_auth_id'));
+
+        if (empty($userProfileData)) {
+            $id = $this->UserProfile_model->insertData($data);
+            $this->response(['status' => 'success', 'message' => 'Profile successfully created', 'data' => ['user_profile_id' => $id]]);
+        } else {
+            $this->response(['status' => 'success', 'message' => 'Profile exists', 'data' => ['user_profile_id' => $userProfileData['id']]]);
+        }
     }
 
     public function profile_get($userAuthId)
