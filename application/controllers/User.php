@@ -33,10 +33,37 @@ class User extends REST_Controller
         }
         if ($userData['pwd'] == hash('sha1', $this->post('pwd'))) {
             unset($userData['pwd']);
-            $this->response(['status' => 'success', 'data' => $userData, 'message' => '']);
+            $userData['token'] = md5(time());
+            $userData['token_expire'] = time() + (15 * 60);
+            $this->UserAuth_model->updateById(['token' => $userData['token'], 'token_expire' => $userData['token_expire']], $userData['id']);
+            $this->response(['status' => 'success', 'data' => $userData, 'message' => 'login successful']);
         }
 
         $this->response(['status' => 'fail', 'data' => $userData, 'message' => 'Invalid login']);
+    }
+    public function refresh_token_post()
+    {
+        $this->load->model('UserAuth_model');
+
+        $token = $this->post('token');
+        $userAuthId = $this->post('user_auth_id');
+
+        $userData = $this->UserAuth_model->getById($userAuthId);
+        if (isset($userData['token']) && $userData['token'] === $token) {
+            $tokenData = $this->refreshToken($userAuthId);
+            $userData['token'] = $tokenData['token'];
+            $userData['token_expire'] = $tokenData['token_expire'];
+            $this->response(['status' => 'success', 'data' => $userData, 'message' => 'Token refreshed']);
+        }
+        $this->response(['status' => 'fail', 'message' => 'Token refresh failed']);
+    }
+    private function refreshToken($userAuthId)
+    {
+        $this->load->model('UserAuth_model');
+        $token = md5(time());
+        $tokenExpire =  time() + (15 * 60);
+        $this->UserAuth_model->updateById(['token' => $token, 'token_expire' => $tokenExpire], $userAuthId);
+        return ['token' => $token, 'token_expire' => $tokenExpire];
     }
     /**
      * Register a user
