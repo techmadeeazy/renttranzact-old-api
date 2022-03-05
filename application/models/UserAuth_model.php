@@ -34,13 +34,12 @@ class UserAuth_model extends CI_Model
         $this->db->update($this->table, $data);
     }
 
-    public function updatePaymentDataWhere($where, $data)
+    public function getBy($byValue,$by='id')
     {
-        $data['modified'] = date("Y-m-d H:i:s");
-        $this->db->where($where);
-        $this->db->update('payments', $data);
+        $query = $this->db->query("SELECT * FROM $this->table WHERE $by = '$byValue'");
+        return $query->row_array();
     }
-
+    
     public function getAll()
     {
         $query = $this->db->query("SELECT * FROM $this->table WHERE 1");
