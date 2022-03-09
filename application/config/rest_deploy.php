@@ -10,7 +10,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Set to force the use of HTTPS for REST API calls
 |
 */
-$config['force_https'] = FALSE;
+$config['force_https'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ $config['force_https'] = FALSE;
 | 'xml':        Uses simplexml_load_string()
 |
 */
-$config['rest_default_format'] = 'xml';
+$config['rest_default_format'] = 'json';
 
 /*
 |--------------------------------------------------------------------------
