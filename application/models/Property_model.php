@@ -34,6 +34,11 @@ class Property_model extends CI_Model
         $this->db->update($this->table, $data);
     }
 
+    public function getAvailableActivePublic() {
+        $query = $this->db->query("SELECT * FROM $this->table WHERE 1");
+        return $query->result_array();
+    }
+    
     public function rawLog($title, $body)
     {
 

@@ -85,7 +85,7 @@ class Property extends REST_Controller
             $this->response(['status' => 'success','data' => ['id' => $propertyId]]);
         }
         else{
-            $this->response(['status' => 'fail','message' => 'Please login']);
+            $this->response(['status' => 'fail','message' => 'Please login', 'debug' => $userData]);
         }
     }
 }
