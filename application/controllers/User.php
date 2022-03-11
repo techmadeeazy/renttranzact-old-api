@@ -38,8 +38,8 @@ class User extends REST_Controller
             $this->UserAuth_model->updateById(['token' => $userData['token'], 'token_expire' => $userData['token_expire']], $userData['id']);
             $this->response(['status' => 'success', 'data' => $userData, 'message' => 'login successful']);
         }
-
-        $this->response(['status' => 'fail', 'data' => $userData, 'message' => 'Invalid login']);
+        //unset( $userData['pwd']);
+        $this->response(['status' => 'fail', 'message' => 'Invalid login']);
     }
     public function refresh_token_post()
     {
