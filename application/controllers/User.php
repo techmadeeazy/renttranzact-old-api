@@ -36,6 +36,9 @@ class User extends REST_Controller
             $userData['token'] = md5(time());
             $userData['token_expire'] = time() + (15 * 60);
             $this->UserAuth_model->updateById(['token' => $userData['token'], 'token_expire' => $userData['token_expire']], $userData['id']);
+            //get the profile
+            $this->load->model('UserProfile_model');
+            $userData['profile'] = $this->UserProfile_model->getBy($userData['id'],'user_auth_id');
             $this->response(['status' => 'success', 'data' => $userData, 'message' => 'login successful']);
         }
         //unset( $userData['pwd']);
