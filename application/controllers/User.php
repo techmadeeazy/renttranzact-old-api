@@ -109,7 +109,7 @@ class User extends REST_Controller
             $id = $this->UserProfile_model->insertData($data);
             $this->response(['status' => 'success', 'message' => 'Profile successfully created', 'data' => ['user_profile_id' => $id]]);
         } else {
-            $this->response(['status' => 'success', 'message' => 'Profile exists', 'data' => ['user_profile_id' => $userProfileData['id']]]);
+            $this->response(['status' => 'fail', 'message' => 'Profile exists', 'data' => ['user_profile_id' => $userProfileData['id']]]);
         }
     }
 
