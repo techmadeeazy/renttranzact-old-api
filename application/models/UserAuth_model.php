@@ -26,6 +26,12 @@ class UserAuth_model extends CI_Model
         return $query->row_array();
     }
 
+    public function getByUsername($username)
+    {
+        $query = $this->db->query("SELECT * FROM $this->table WHERE username = '$username'");
+        return $query->row_array();
+    }
+
 
     public function updateById($data, $id)
     {

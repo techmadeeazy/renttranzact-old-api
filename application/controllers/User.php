@@ -71,11 +71,19 @@ class User extends REST_Controller
     public function register_post()
     {
         $this->load->model('UserAuth_model');
-        $data = ['username' => $this->post('username'), 'pwd' => hash('sha1', $this->post('pwd'))];
+        $referralCode = $this->post('referral_code');
+        $data = ['account_type' => $this->post('account_type') ,'username' => $this->post('username'), 'pwd' => hash('sha1', $this->post('pwd'))];
         //confirm that username does not exist
         $userData = $this->UserAuth_model->getBy($this->post('username'), 'username');
         if (!empty($userData)) {
             $this->response(['status' => 'fail', 'data' => [], 'message' => 'Username already exits']);
+        }
+        //confirm that refferrer exists
+        if(!empty($referralCode)){
+            $rData = $this->UserAuth_model->getBy($referralCode, 'username');
+            if(!empty($rData)){
+                $data['referral_code'] = $referralCode;
+            }
         }
 
         $id = $this->UserAuth_model->insertData($data);
@@ -88,7 +96,8 @@ class User extends REST_Controller
     public function profile_post()
     {
         $this->load->model('UserProfile_model');
-        $data = ['user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender')];
+        $data = ['user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'),'state' => $this->post('state'),'lga' => $this->post('lga'),'rc_number' => $this->post('rc_number')
+    ];
 
         //confirm that profile does not initially exist
         $userProfileData = $this->UserProfile_model->getBy($this->post('user_auth_id'), $this->post('user_auth_id'));
