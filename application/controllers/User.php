@@ -103,7 +103,7 @@ class User extends REST_Controller
     ];
 
         //confirm that profile does not initially exist
-        $userProfileData = $this->UserProfile_model->getBy($this->post('user_auth_id'), $this->post('user_auth_id'));
+        $userProfileData = $this->UserProfile_model->getBy($this->post('user_auth_id'), 'user_auth_id');
 
         if (empty($userProfileData)) {
             $id = $this->UserProfile_model->insertData($data);
@@ -119,7 +119,8 @@ class User extends REST_Controller
         $this->load->model('UserProfile_model');
         $userAuthData =  $this->UserAuth_model->getById($userAuthId);
         $profileData = $this->UserProfile_model->getBy($userAuthId, 'user_auth_id');
+        $data = empty($profileData) ? $userAuthData : array_merge($userAuthData, $profileData);
         unset($userAuthData['pwd']);
-        $this->response(['status' => 'success', 'data' => array_merge($userAuthData, $profileData)]);
+        $this->response(['status' => 'success', 'data' => $data]);
     }
 }
