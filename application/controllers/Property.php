@@ -60,13 +60,12 @@ class Property extends REST_Controller
             $data['type'] = $this->post('type');
             $data['display'] = $this->post('display');
 
-            
+
 
             $id = $this->Property_model->insertData($data);
-            $this->response(['status' => 'success','data' => ['id' => $id]]);
-        }
-        else{
-            $this->response(['status' => 'fail','message' => 'Please login']);
+            $this->response(['status' => 'success', 'data' => ['id' => $id]]);
+        } else {
+            $this->response(['status' => 'fail', 'message' => 'Please login']);
         }
     }
     public function update_listing_post()
@@ -78,11 +77,11 @@ class Property extends REST_Controller
         if (isset($userData['token']) && $userData['token'] === $loginToken) {
             $this->load->model('Property_model');
             $propertyId = $this->post('id');
-            
+
 
             $propertyData = $this->Property_model->getById($propertyId);
-            if ($propertyData['user_auth_id'] != $userAuthId){
-                $this->response(['status' => 'fail','message' => 'Please login']);    
+            if ($propertyData['user_auth_id'] != $userAuthId) {
+                $this->response(['status' => 'fail', 'message' => 'Please login']);
             }
 
             $data['user_auth_id'] = $userAuthId;
@@ -100,49 +99,54 @@ class Property extends REST_Controller
 
 
             $this->Property_model->updateById($data, $propertyId);
-    
-            $this->response(['status' => 'success','data' => ['id' => $propertyId]]);
-        }
-        else{
-            $this->response(['status' => 'fail','message' => 'Please login', 'debug' => $userData]);
+
+            $this->response(['status' => 'success', 'data' => ['id' => $propertyId]]);
+        } else {
+            $this->response(['status' => 'fail', 'message' => 'Please login', 'debug' => $userData]);
         }
     }
     public function add_image_post()
     {
         $userAuthId = $this->post('user_auth_id');
         $loginToken = $this->post('token');
-        $this->load->model('UserAuth_model');
-        $userData = $this->UserAuth_model->getById($userAuthId);
-        if (isset($userData['token']) && $userData['token'] === $loginToken) {
-            $this->load->model('Property_model');
-            $propertyId = $this->post('id');
-            
+        $propertyId = $this->post('property_id');
+        $images = $this->post('images');
 
-            $propertyData = $this->Property_model->getById($propertyId);
-            if ($propertyData['user_auth_id'] != $userAuthId){
-                $this->response(['status' => 'fail','message' => 'Please login']);    
-            }
-
-            $data['user_auth_id'] = $userAuthId;
-            $data['property_code'] = $this->post('property_code');
-            $data['description'] = $this->post('description');
-            $data['address'] = $this->post('address');
-            $data['state'] = $this->post('state');
-            $data['asking_price'] = $this->post('asking_price');
-            //$data['active'] = 0;
-            //$data['status'] = 'available';
-            $data['no_of_parking_lot'] = $this->post('no_of_parking_lot');
-            $data['no_of_bedroom'] = $this->post('no_of_bedroom');
-            $data['no_of_toilets'] = $this->post('no_of_toilets');
-            $data['type'] = $this->post('type');
+        //$this->load->model('UserAuth_model');
+        //$userData = $this->UserAuth_model->getById($userAuthId);
+        //if (isset($userData['token']) && $userData['token'] === $loginToken) {
+        $this->load->model('Property_model');
+        $this->load->model('PropertyImage_model');
 
 
-            $this->Property_model->updateById($data, $propertyId);
-    
-            $this->response(['status' => 'success','data' => ['id' => $propertyId]]);
+        $propertyData = $this->Property_model->getById($propertyId);
+        if ($propertyData['user_auth_id'] != $userAuthId) {
+            $this->response(['status' => 'fail', 'message' => 'Please login']);
         }
+        $result = [];
+        foreach ($images as $image) {
+            $id = $this->PropertyImage_model->insertData($image);
+            $result[] = array_merge(['id' => $id], $image);
+        }
+
+        $this->response(['status' => 'success', 'data' => $result]);
+        /* }
         else{
             $this->response(['status' => 'fail','message' => 'Please login', 'debug' => $userData]);
-        }
+        }*/
+    }
+
+    /**
+     * Get all property listing
+     */
+    public function single_listing_get($id)
+    {
+        $data = [];
+        $this->load->model('Property_model');
+        $this->load->model('PropertyImage_model');
+        $data = $this->Property_model->getById($id);
+        $data['images'] = $this->PropertyImage_model->getAllBy($id,'property_id');
+
+        $this->response(['status' => 'success', 'data' => $data]);
     }
 }
