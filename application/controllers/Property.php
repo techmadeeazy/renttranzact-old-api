@@ -125,6 +125,7 @@ class Property extends REST_Controller
         }
         $result = [];
         foreach ($images as $image) {
+            $image['property_id'] = $propertyId;
             $id = $this->PropertyImage_model->insertData($image);
             $result[] = array_merge(['id' => $id], $image);
         }
