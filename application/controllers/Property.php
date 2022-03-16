@@ -69,6 +69,7 @@ class Property extends REST_Controller
             $data['description'] = $this->post('description');
             $data['address'] = $this->post('address');
             $data['state'] = $this->post('state');
+            $data['lga'] = $this->post('lga');
             $data['asking_price'] = $this->post('asking_price');
             $data['active'] = 0;
             $data['status'] = 'available';
