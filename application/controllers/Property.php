@@ -28,10 +28,28 @@ class Property extends REST_Controller
     {
         $data = [];
         $this->load->model('Property_model');
+        $this->load->model('PropertyImage_model');
 
-        $data = $this->Property_model->getAvailableActivePublic();
-
-        $this->response(['status' => 'success', 'data' => $data]);
+        $propertyData = $this->Property_model->getAvailableActivePublic();
+        $responseData = [];
+        foreach($propertyData as $pd){
+            //get featured image
+            $imageData = $this->PropertyImage_model->getFeaturedImage($pd['id']);
+            if(empty($imageData)){
+                //set default values
+                $pd['image_url'] = 'https://res.cloudinary.com/rent-tranzact-limited/image/upload/v1647366660/bkfn512urnate2dlmxge.jpg';
+                $pd['image_title'] =''; 
+            }
+            else{
+                $pd['image_url'] = $imageData['url'];
+                $pd['image_title'] = $imageData['title'];
+            }
+            
+            //get images by property id
+            //$pd['images'] = $this->PropertyImage_model->getAllBy($pd['id'], 'property_id');
+            $responseData[] = $pd;
+        }
+        $this->response(['status' => 'success', 'data' => $responseData]);
     }
     /**
      * Upload a property listing

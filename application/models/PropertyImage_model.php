@@ -46,6 +46,12 @@ class PropertyImage_model extends CI_Model
         return $query->result_array();
     }
     
+    public function getFeaturedImage($propertyId)
+    {
+        $query = $this->db->query("SELECT * FROM $this->table WHERE property_id = '$propertyId' AND featured = '1'");
+        return $query->row_array();
+    }
+
     public function rawLog($title, $body)
     {
 
