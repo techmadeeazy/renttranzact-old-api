@@ -24,13 +24,18 @@ class Property extends REST_Controller
     /**
      * Get all property listing
      */
-    public function listing_get()
+    public function listing_get($userAuthId='')
     {
         $data = [];
         $this->load->model('Property_model');
         $this->load->model('PropertyImage_model');
-
-        $propertyData = $this->Property_model->getAvailableActivePublic();
+if(empty($userAuthId)){
+    $propertyData = $this->Property_model->getAvailableActivePublic();
+}
+else{
+    $propertyData = $this->Property_model->getAllBy($userAuthId,'user_auth_id');
+}
+    
         $responseData = [];
         foreach($propertyData as $pd){
             //get featured image

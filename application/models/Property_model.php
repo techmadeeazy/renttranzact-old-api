@@ -38,6 +38,13 @@ class Property_model extends CI_Model
         $query = $this->db->query("SELECT * FROM $this->table WHERE 1");
         return $query->result_array();
     }
+
+    public function getAllBy($byValue,$by='id')
+    {
+        $query = $this->db->query("SELECT * FROM $this->table WHERE $by = '$byValue'");
+        return $query->result_array();
+    }
+    
     
     public function rawLog($title, $body)
     {
