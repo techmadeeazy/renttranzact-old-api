@@ -171,6 +171,9 @@ else{
         $this->load->model('PropertyImage_model');
         $data = $this->Property_model->getById($id);
         $data['images'] = $this->PropertyImage_model->getAllBy($id,'property_id');
+        //add bookings
+        $this->load->model('InspectionBooking_model');
+        $data['bookings'] = $this->InspectionBooking_model->getAllBy($id, 'property_id');
 
         $this->response(['status' => 'success', 'data' => $data]);
     }
