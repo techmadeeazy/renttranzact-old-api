@@ -174,16 +174,32 @@ class User extends REST_Controller
     {
         $this->load->model('UserAuth_model');
         $this->load->model('InspectionBooking_model');
-        $userAuthData =  $this->UserAuth_model->getById($userAuthId);
+        //$userAuthData =  $this->UserAuth_model->getById($userAuthId);
+        $this->load->model('UserProfile_model');
+        $bookingResponse = [];
         switch ($role) {
             case 'agent':
                 $bookingData = $this->InspectionBooking_model->getAllBy($userAuthId, 'host_id');
+                foreach($bookingData as $b){
+                    $inspectorData = $this->UserProfile_model->getBy($b['inspector_id'], 'user_auth_id');
+                    unset($inspectorData['address'],$inspectorData['created'],$inspectorData['modified'],$inspectorData['status'],$inspectorData['primary_role'],$inspectorData['id'],$inspectorData['lga'],$inspectorData['rc_number']);
+                    $b['inspector'] = $inspectorData;
+    
+                    $bookingResponse[] = $b;
+                }
                 break;
             case 'tenant':
                 $bookingData = $this->InspectionBooking_model->getAllBy($userAuthId, 'inspector_id');
+                foreach($bookingData as $b){
+                   
+                    $hostData = $this->UserProfile_model->getBy($b['host_id'], 'user_auth_id');
+                    unset($hostData['address'],$hostData['created'],$hostData['modified'],$hostData['status'],$hostData['primary_role'],$hostData['id'],$hostData['lga'],$hostData['rc_number']);
+                    $b['host'] = $hostData;
+                    $bookingResponse[] = $b;
+                }
                 break;
         }
-        $this->response(['status' => 'success', 'data' => $bookingData]);
+        $this->response(['status' => 'success', 'data' => $bookingResponse]);
     }
 
     public function approve_booking_post()
