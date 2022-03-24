@@ -173,7 +173,23 @@ else{
         $data['images'] = $this->PropertyImage_model->getAllBy($id,'property_id');
         //add bookings
         $this->load->model('InspectionBooking_model');
-        $data['bookings'] = $this->InspectionBooking_model->getAllBy($id, 'property_id');
+         $bookingData = $this->InspectionBooking_model->getAllBy($id, 'property_id');
+         $bookingResponse = [];
+         if(!empty($bookingData)){
+            $this->load->model('UserProfile_model');
+            foreach($bookingData as $b){
+                $inspectorData = $this->UserProfile_model->getBy($b['inspector_id'], 'user_auth_id');
+                unset($inspectorData['address'],$inspectorData['created'],$inspectorData['modified'],$inspectorData['status'],$inspectorData['primary_role'],$inspectorData['id'],$inspectorData['lga'],$inspectorData['rc_number']);
+                $b['inspector'] = $inspectorData;
+
+                $hostData = $this->UserProfile_model->getBy($b['host_id'], 'user_auth_id');
+                unset($hostData['address'],$hostData['created'],$hostData['modified'],$hostData['status'],$hostData['primary_role'],$hostData['id'],$hostData['lga'],$hostData['rc_number']);
+                $b['host'] = $hostData;
+                $bookingResponse[] = $b;
+            }
+         }
+        
+         $data['bookings'] = $bookingResponse;
 
         $this->response(['status' => 'success', 'data' => $data]);
     }
