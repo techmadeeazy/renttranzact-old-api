@@ -24,32 +24,30 @@ class Property extends REST_Controller
     /**
      * Get all property listing
      */
-    public function listing_get($userAuthId='')
+    public function listing_get($userAuthId = '')
     {
         $data = [];
         $this->load->model('Property_model');
         $this->load->model('PropertyImage_model');
-if(empty($userAuthId)){
-    $propertyData = $this->Property_model->getAvailableActivePublic();
-}
-else{
-    $propertyData = $this->Property_model->getAllBy($userAuthId,'user_auth_id');
-}
-    
+        if (empty($userAuthId)) {
+            $propertyData = $this->Property_model->getAvailableActivePublic();
+        } else {
+            $propertyData = $this->Property_model->getAllBy($userAuthId, 'user_auth_id');
+        }
+
         $responseData = [];
-        foreach($propertyData as $pd){
+        foreach ($propertyData as $pd) {
             //get featured image
             $imageData = $this->PropertyImage_model->getFeaturedImage($pd['id']);
-            if(empty($imageData)){
+            if (empty($imageData)) {
                 //set default values
                 $pd['image_url'] = 'https://res.cloudinary.com/rent-tranzact-limited/image/upload/v1647366660/bkfn512urnate2dlmxge.jpg';
-                $pd['image_title'] =''; 
-            }
-            else{
+                $pd['image_title'] = '';
+            } else {
                 $pd['image_url'] = $imageData['url'];
                 $pd['image_title'] = $imageData['title'];
             }
-            
+
             //get images by property id
             //$pd['images'] = $this->PropertyImage_model->getAllBy($pd['id'], 'property_id');
             $responseData[] = $pd;
@@ -170,26 +168,26 @@ else{
         $this->load->model('Property_model');
         $this->load->model('PropertyImage_model');
         $data = $this->Property_model->getById($id);
-        $data['images'] = $this->PropertyImage_model->getAllBy($id,'property_id');
+        $data['images'] = $this->PropertyImage_model->getAllBy($id, 'property_id');
         //add bookings
         $this->load->model('InspectionBooking_model');
-         $bookingData = $this->InspectionBooking_model->getAllBy($id, 'property_id');
-         $bookingResponse = [];
-         if(!empty($bookingData)){
+        $bookingData = $this->InspectionBooking_model->getAllBy($id, 'property_id');
+        $bookingResponse = [];
+        if (!empty($bookingData)) {
             $this->load->model('UserProfile_model');
-            foreach($bookingData as $b){
+            foreach ($bookingData as $b) {
                 $inspectorData = $this->UserProfile_model->getBy($b['inspector_id'], 'user_auth_id');
-                unset($inspectorData['address'],$inspectorData['created'],$inspectorData['modified'],$inspectorData['status'],$inspectorData['primary_role'],$inspectorData['id'],$inspectorData['lga'],$inspectorData['rc_number']);
+                unset($inspectorData['address'], $inspectorData['created'], $inspectorData['modified'], $inspectorData['status'], $inspectorData['primary_role'], $inspectorData['id'], $inspectorData['lga'], $inspectorData['rc_number']);
                 $b['inspector'] = $inspectorData;
 
                 $hostData = $this->UserProfile_model->getBy($b['host_id'], 'user_auth_id');
-                unset($hostData['address'],$hostData['created'],$hostData['modified'],$hostData['status'],$hostData['primary_role'],$hostData['id'],$hostData['lga'],$hostData['rc_number']);
+                unset($hostData['address'], $hostData['created'], $hostData['modified'], $hostData['status'], $hostData['primary_role'], $hostData['id'], $hostData['lga'], $hostData['rc_number']);
                 $b['host'] = $hostData;
                 $bookingResponse[] = $b;
             }
-         }
-        
-         $data['bookings'] = $bookingResponse;
+        }
+
+        $data['bookings'] = $bookingResponse;
 
         $this->response(['status' => 'success', 'data' => $data]);
     }
