@@ -162,9 +162,19 @@ class User extends REST_Controller
                 $this->response(['status' => 'fail', 'message' => 'Property is not available']);
             }
             $this->load->model('InspectionBooking_model');
-            $bookId = $this->InspectionBooking_model->insertData(['inspector_id' => $userAuthId, 'host_id' => $propertyData['user_auth_id'], 'property_id' => $propertyId]);
+            $this->load->model('Base_model');
+            //check if booking exist
+            $bookingExistData = $this->Base_model->getOneRecord('inspection_bookings', ['inspector_id' => $userAuthId,'property_id' => $propertyId]);
+            if(empty($bookingExistData)){
+                $bookId = $this->InspectionBooking_model->insertData(['inspector_id' => $userAuthId, 'host_id' => $propertyData['user_auth_id'], 'property_id' => $propertyId]);
+                $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => ['id' => $bookId]]);
+            }
+            else{
+                $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $bookingExistData]);
+            }
+            
 
-            $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => ['id' => $bookId]]);
+            
         } else {
             $this->response(['status' => 'fail', 'message' => 'Please login']);
         }
@@ -236,7 +246,39 @@ class User extends REST_Controller
 
             if ($userAuthId == $bookingData['host_id']) {
                 //approve with caution fee and agreed amount
-                $this->InspectionBooking_model->updateById(['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount')], $bookingData['id']);
+                $this->InspectionBooking_model->updateById(['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'),'status' => 'approve_payment'], $bookingData['id']);
+            }
+
+            $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $this->post()]);
+        } else {
+            $this->response(['status' => 'fail', 'message' => 'Please login']);
+        }
+        $this->response(['status' => 'fail', 'message' => 'Please login']);
+    }
+
+    public function update_booking_post()
+    {
+        $userAuthId = $this->post('user_auth_id');
+        $loginToken = $this->post('token');
+        $bookStatus = $this->post('status');
+
+        if (!in_array($bookStatus, ['cancel','pending','approve_payment'])) {
+            $this->response(['status' => 'fail', 'message' => 'Invalid status']);
+        }
+        $this->load->model('UserAuth_model');
+        $userData = $this->UserAuth_model->getById($userAuthId);
+        $bookingId = $this->post('booking_id');
+        if (isset($userData['token']) && $userData['token'] === $loginToken) {
+            $this->load->model('InspectionBooking_model');
+            //get the booking data
+            $bookingData = $this->InspectionBooking_model->getById($bookingId);
+            if (empty($bookingData)) {
+                $this->response(['status' => 'fail', 'message' => 'Booking is not available']);
+            }
+
+            if ($userAuthId == $bookingData['host_id']) {
+                //approve with caution fee and agreed amount
+                $this->InspectionBooking_model->updateById(['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'),'status' => $bookStatus], $bookingData['id']);
             }
 
             $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $this->post()]);

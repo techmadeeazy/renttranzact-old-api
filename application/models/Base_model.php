@@ -3,7 +3,8 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Base_model extends CI_Model {
+class Base_model extends CI_Model
+{
 
     /**
      * Class constructor
@@ -11,12 +12,13 @@ class Base_model extends CI_Model {
      * @access public
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->database();
     }
 
-// End func __construct
+    // End func __construct
 
     /**
      * Get all from a table
@@ -25,7 +27,8 @@ class Base_model extends CI_Model {
      * @param  $params
      * @return mixed (bool | array)
      */
-    public function all($table) {
+    public function all($table)
+    {
 
         if (empty($table)) {
             return false;
@@ -35,7 +38,7 @@ class Base_model extends CI_Model {
         return $res->result();
     }
 
-// End func get
+    // End func get
 
     /**
      * Get 
@@ -44,7 +47,8 @@ class Base_model extends CI_Model {
      * @param  $params
      * @return mixed (bool | array)
      */
-    public function get_count($table, $where = Null) {
+    public function get_count($table, $where = Null)
+    {
 
         if (empty($table)) {
             return false;
@@ -60,22 +64,16 @@ class Base_model extends CI_Model {
      * @param  $params
      * @return mixed (bool | array)
      */
-    public function getOneRecord($table, $where = Null) {
-
+    public function getOneRecord($table, $where = Null)
+    {
         if (empty($table) || empty($where)) {
             return false;
         }
-        //$sql = $this->db->get_compiled_select('mytable');
-//echo $sql;
-
-        //$sql = $this->db->get_compiled_select($table, $where);
-       // print_r($sql);
         $res = $this->db->get_where($table, $where);
-        print_r($res);
         return $res->row_array();
     }
 
-// End func get
+    // End func get
 
     /**
      * Get many
@@ -84,7 +82,8 @@ class Base_model extends CI_Model {
      * @param  $params
      * @return mixed (bool | array)
      */
-    public function get_many($table, $where = Null) {
+    public function get_many($table, $where = Null)
+    {
 
         if (empty($table)) {
             return false;
@@ -94,7 +93,7 @@ class Base_model extends CI_Model {
         return $res->result();
     }
 
-// End func get
+    // End func get
 
     /**
      * undocumented function
@@ -102,7 +101,8 @@ class Base_model extends CI_Model {
      * @return void
      * @author 
      * */
-    public function get_loans($limit = NULL) {
+    public function get_loans($limit = NULL)
+    {
         $this->db->where('status', 0);
         if ($limit) {
             $this->db->limit($limit);
@@ -116,7 +116,8 @@ class Base_model extends CI_Model {
      * @return void
      * @author 
      * */
-    public function get_loans_patch($limit = NULL) {
+    public function get_loans_patch($limit = NULL)
+    {
         $this->db->where('patch_status', 0);
         if ($limit) {
             $this->db->limit($limit);
@@ -130,7 +131,8 @@ class Base_model extends CI_Model {
      * @return void
      * @author 
      * */
-    public function get_sum($row, $table, $where = null) {
+    public function get_sum($row, $table, $where = null)
+    {
         $this->db->select_sum($row);
         if ($where) {
             $this->db->where($where);
@@ -143,9 +145,10 @@ class Base_model extends CI_Model {
      * 
      * @access public 
      */
-    public function add($table, $data, $id = false) {
+    public function add($table, $data, $id = false)
+    {
 
-        if (empty($data) OR empty($table)) {
+        if (empty($data) or empty($table)) {
             return false;
         }
 
@@ -158,14 +161,15 @@ class Base_model extends CI_Model {
         }
     }
 
-// End func
+    // End func
 
     /**
      * edit/update
      * 
      * @access public 
      */
-    public function update($table, $data, $where) {
+    public function update($table, $data, $where)
+    {
 
         if (empty($data) || empty($table)) {
             return false;
@@ -176,16 +180,17 @@ class Base_model extends CI_Model {
         return $this->db->affected_rows() > 0;
     }
 
-// End func
+    // End func
 
     /**
      * delete
      * 
      * @access public 
      */
-    public function delete($table, $where) {
+    public function delete($table, $where)
+    {
 
-        if (empty($where) OR empty($table)) {
+        if (empty($where) or empty($table)) {
             return false;
         }
 
@@ -193,7 +198,7 @@ class Base_model extends CI_Model {
         return $q;
     }
 
-// End func
+    // End func
 
     /**
      * Insert batch data
@@ -201,14 +206,16 @@ class Base_model extends CI_Model {
      * @param $data Array 
      * @access public 
      */
-    public function insert_batch($table, $data) {
+    public function insert_batch($table, $data)
+    {
         return $this->db->insert_batch($table, $data);
     }
 
     /**
      * Return the db object for this model
      * */
-    public function get_db() {
+    public function get_db()
+    {
         return $this->db;
     }
 
@@ -218,7 +225,8 @@ class Base_model extends CI_Model {
      * @return void
      * @author 
      * */
-    public function truncate($table) {
+    public function truncate($table)
+    {
         $this->db->truncate($table);
     }
 
@@ -228,10 +236,10 @@ class Base_model extends CI_Model {
      * @return void
      * @author 
      * */
-    public function get_failed_queue() {
+    public function get_failed_queue()
+    {
         $this->db->where('created_timestamp >', '2019-02-28 00:00:00');
         $this->db->where_in('verification_status', ['failed', 'queued']);
         return $this->db->get('queued_transactions')->result();
     }
-
 }
