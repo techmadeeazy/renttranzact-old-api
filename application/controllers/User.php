@@ -31,7 +31,8 @@ class User extends REST_Controller
         if (empty($userData)) {
             $this->response(['status' => 'fail', 'data' => [], 'message' => 'Invalid username']);
         }
-        if ($userData['pwd'] == hash('sha1', $this->post('pwd'))) {
+        $pwd = $this->post('pwd');
+        if (!empty($pwd) && ($userData['pwd'] == hash('sha1', $this->post('pwd')))) {
             unset($userData['pwd']);
             $userData['token'] = md5(time());
             $userData['token_expire'] = time() + (15 * 60);
