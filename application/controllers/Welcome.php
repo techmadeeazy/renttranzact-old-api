@@ -66,7 +66,7 @@ class Welcome extends CI_Controller
       }
 
       // ---------------------------------------------------------
-      
+
       //$pdf->addTTFfont('Lato-Light.ttf');
       // set font
       $pdf->SetFont('helvetica', '', 10);
@@ -78,7 +78,7 @@ class Welcome extends CI_Controller
       // writeHTMLCell($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=0, $reseth=true, $align='', $autopadding=true)
 
       // create some HTML content
-      $html = '<style>'.file_get_contents(FCPATH.'/assets/css/bootstrap.min.css').'</style>';
+      $html = '<style>' . file_get_contents(FCPATH . '/assets/css/bootstrap.min.css') . '</style>';
       $html .= '<div class="container">
       <div class="row">
          <div class="well col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
@@ -130,31 +130,61 @@ class Welcome extends CI_Controller
       //Close and output PDF document
       $fileName = "C:\laragon\www\api_hub\public\download\coronation_" . rand() . '.pdf';
       $pdf->Output($fileName, 'I');
-     // echo "File: "   . $fileName;
+      // echo "File: "   . $fileName;
       //============================================================+
       // END OF FILE
       //============================================================+   
    }
 
-   public function test2()
+   public function test3()
    {
-    //$data = 'some more and more data';
-      $this->load->helper('file');
-      //write_file(APPPATH . 'config/hrms.php', $data);
-
-      //$string = file_get_contents(APPPATH . 'config/hrms.php');
-      $fileInfo = get_file_info(APPPATH . 'config/hrms.php');
-
-      echo  date('Y:m:d h i s',$fileInfo['date']);
-      echo '<br>';
-      echo 'Now:'.time();
-      echo '<br> Then:'. $fileInfo['date']. '<br>';
-      echo (time() - $fileInfo['date']) > 6;//72000 seconds is 20 hours
-      //echo $string;
-   }
-   public function test3(){
-      //echo FCPATH;
-      $html = '<style>'.file_get_contents(FCPATH.'/assets/css/bootstrap.min.css').'</style>';
-      echo $html;
+      $curl = curl_init();
+      
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/merchant/api/paymentinit',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS =>'{
+          "serviceTypeId": "4430731",
+          "amount": "100",
+          "orderId": "1649061552818",
+          "payerName": "John Doe",
+          "payerEmail": "doe@gmail.com",
+          "payerPhone": "09062067384",
+          "description": "Payment for Septmeber Fees",
+          "lineItems": [
+              {
+                  "lineItemsId": "itemid1",
+                  "beneficiaryName": "Alozie Michael",
+                  "beneficiaryAccount": "6020067886",
+                  "bankCode": "058",
+                  "beneficiaryAmount": "7000",
+                  "deductFeeFrom": "1"
+              },
+              {
+                  "lineItemsId": "itemid2",
+                  "beneficiaryName": "Folivi Joshua",
+                  "beneficiaryAccount": "0360883515",
+                  "bankCode": "058",
+                  "beneficiaryAmount": "3000",
+                  "deductFeeFrom": "0"
+              }
+          ]
+      }',
+        CURLOPT_HTTPHEADER => array(
+          'Authorization: remitaConsumerKey=2547916,remitaConsumerToken=a3dd2e50d69f6e928d02d5a995aa059c80257edb530282f8ba27a2df6e39e8182e77aedb66f4e55771d5c6b67f426364e010e2dc970bfbef8b8e449164c67621',
+          'Content-Type: application/json'
+        ),
+      ));
+      
+      $response = curl_exec($curl);
+      
+      curl_close($curl);
+      echo $response;
    }
 }
