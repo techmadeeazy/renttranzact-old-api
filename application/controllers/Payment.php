@@ -54,6 +54,9 @@ class Payment extends REST_Controller
             $totalAmount = floatval($bookingData['agreed_amount']) + floatval($bookingData['caution_fee']);
             $this->load->model('Payment_model');
             $processorReference = $this->getRemitaRRR($reference, $totalAmount);
+            if(empty($processorReference)){
+                $this->response(['status' => 'fail', 'message' => 'Reference(RRR) cannot be generated']);        
+            }
             $paymentData = ['reference' => $reference, 'processor_reference' => $processorReference, 'inspection_booking_id' => $bookingData['id'], 'amount' => $totalAmount, 'user_id' => $userAuthId,];
             $this->Payment_model->insertData($paymentData);
 
