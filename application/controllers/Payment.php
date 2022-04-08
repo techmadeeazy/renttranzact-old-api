@@ -71,13 +71,13 @@ class Payment extends REST_Controller
     public function remita_rrr2_get()
     {
         $this->load->helper('string');
-        echo random_string('basic');
+       // echo random_string('basic');
         $this->load->config('app');
         $orderId = md5(time());
         $totalAmount = 100;
         $apiKey = $this->config->item('remita_api_key');
         $apiHash = hash('sha512', $this->config->item('remita_merchant_id') . $this->config->item('remita_service_type_id')
-            . $this->config->item('remita_service_type_id') . $totalAmount . $apiKey);
+            . $orderId . $totalAmount . $apiKey);
 
         $curl = curl_init();
 
@@ -109,6 +109,9 @@ class Payment extends REST_Controller
 
         curl_close($curl);
         echo $response;
+        $this->response(['status' => 'success','data' => ['api_key' => $apiKey,'orderId' => $orderId, 'amount' => $totalAmount,'api_hash' => $apiHash ],
+        'service_type_id' => $this->config->item('remita_service_type_id'),
+        'merchant_id' => $this->config->item('remita_merchant_id') , 'response' => json_decode($response,false)]);
     }
 
     public function remita_rrr_get()
