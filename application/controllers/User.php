@@ -136,17 +136,22 @@ class User extends REST_Controller
             'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('email_address'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number')
         ];
 
-        //confirm that profile does not initially exist
+        //update only data that is not empty
+        foreach ($data as $key => $value) {
+            if (empty($value)) {
+                unset($data[$key]);
+            }
+        }
+        //Get the profile
         $userProfileData = $this->UserProfile_model->getBy($this->post('user_auth_id'), 'user_auth_id');
 
         if (empty($userProfileData)) {
-            $id = $this->UserProfile_model->insertData($data);
-            $this->response(['status' => 'success', 'message' => 'Profile successfully created', 'data' => ['user_profile_id' => $id]]);
-        } else {
-            $this->UserProfile_model->updateById($data, $userProfileData['id']);
-            $data['id'] = $userProfileData['id'];
-            $this->response(['status' => 'success', 'message' => 'Profile updated', 'data' => $data]);
+            $this->response(['status' => 'fail', 'message' => 'Profile to update does not exist. Create the profile first.']);
         }
+
+        $this->UserProfile_model->updateById($data, $userProfileData['id']);
+        $data['id'] = $userProfileData['id'];
+        $this->response(['status' => 'success', 'message' => 'Profile updated', 'data' => $data]);
     }
 
     public function book_inspection_post()
@@ -165,17 +170,13 @@ class User extends REST_Controller
             $this->load->model('InspectionBooking_model');
             $this->load->model('Base_model');
             //check if booking exist
-            $bookingExistData = $this->Base_model->getOneRecord('inspection_bookings', ['inspector_id' => $userAuthId,'property_id' => $propertyId]);
-            if(empty($bookingExistData)){
+            $bookingExistData = $this->Base_model->getOneRecord('inspection_bookings', ['inspector_id' => $userAuthId, 'property_id' => $propertyId]);
+            if (empty($bookingExistData)) {
                 $bookId = $this->InspectionBooking_model->insertData(['inspector_id' => $userAuthId, 'host_id' => $propertyData['user_auth_id'], 'property_id' => $propertyId]);
                 $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => ['id' => $bookId]]);
-            }
-            else{
+            } else {
                 $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $bookingExistData]);
             }
-            
-
-            
         } else {
             $this->response(['status' => 'fail', 'message' => 'Please login']);
         }
@@ -247,7 +248,7 @@ class User extends REST_Controller
 
             if ($userAuthId == $bookingData['host_id']) {
                 //approve with caution fee and agreed amount
-                $this->InspectionBooking_model->updateById(['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'),'status' => 'approve_payment'], $bookingData['id']);
+                $this->InspectionBooking_model->updateById(['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment'], $bookingData['id']);
             }
 
             $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $this->post()]);
@@ -263,7 +264,7 @@ class User extends REST_Controller
         $loginToken = $this->post('token');
         $bookStatus = $this->post('status');
 
-        if (!in_array($bookStatus, ['cancel','pending','approve_payment'])) {
+        if (!in_array($bookStatus, ['cancel', 'pending', 'approve_payment'])) {
             $this->response(['status' => 'fail', 'message' => 'Invalid status']);
         }
         $this->load->model('UserAuth_model');
@@ -279,7 +280,7 @@ class User extends REST_Controller
 
             if ($userAuthId == $bookingData['host_id']) {
                 //approve with caution fee and agreed amount
-                $this->InspectionBooking_model->updateById(['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'),'status' => $bookStatus], $bookingData['id']);
+                $this->InspectionBooking_model->updateById(['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => $bookStatus], $bookingData['id']);
             }
 
             $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $this->post()]);
