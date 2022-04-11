@@ -34,7 +34,10 @@ class Payment extends REST_Controller
         $userAuthId = $this->post('user_auth_id');
         $loginToken = $this->post('token');
         $this->load->model('UserAuth_model');
+        $this->load->model('UserProfile_model');
+        
         $userData = $this->UserAuth_model->getById($userAuthId);
+        $userData['profile'] = $this->UserProfile_model->getBy($userData['id'], 'user_auth_id');
         $bookingId = $this->post('booking_id');
         if (isset($userData['token']) && $userData['token'] === $loginToken) {
             $this->load->model('InspectionBooking_model');
@@ -53,13 +56,13 @@ class Payment extends REST_Controller
             $reference = random_string('md5');
             $totalAmount = floatval($bookingData['agreed_amount']) + floatval($bookingData['caution_fee']);
             $this->load->model('Payment_model');
-            $processorReference = $this->getRemitaRRR($reference, $totalAmount);
+            $processorReference = $this->getRemitaRRR($reference, $totalAmount,$userData['profile']);
             if(empty($processorReference)){
                 $this->response(['status' => 'fail', 'message' => 'Reference(RRR) cannot be generated']);        
             }
             $paymentData = ['reference' => $reference, 'processor_reference' => $processorReference, 'inspection_booking_id' => $bookingData['id'], 'amount' => $totalAmount, 'user_id' => $userAuthId,];
             $this->Payment_model->insertData($paymentData);
-
+            $paymentData['payment_url'] = 'https://remitademo.net/remita/onepage/biller/'.$processorReference.'/payment.spa';
             $this->response(['status' => 'success', 'message' => 'Payment started', 'data' => $paymentData]);
         }
         $this->response(['status' => 'fail', 'message' => 'Please login']);
@@ -87,10 +90,10 @@ class Payment extends REST_Controller
               "serviceTypeId": "' . $this->config->item('remita_service_type_id') . '",
               "amount": ' . $totalAmount . ',
               "orderId": "' . $orderId . '",
-              "payerName": "Joe Olu",
-              "payerEmail": "temidayo.joe@gmail.com",
-              "payerPhone": "08034760836",
-              "description": "Test payment"
+              "payerName": "'.$otherData['first_name'].' '.$otherData['last_name'].'",
+              "payerEmail": "'.$otherData['email_address'].'",
+              "payerPhone": "'.$otherData['phone'].'",
+              "description": "Payment to RentTranzact"
           }',
             CURLOPT_HTTPHEADER => array(
                 'Authorization: remitaConsumerKey=' . $this->config->item('remita_merchant_id') . ',remitaConsumerToken=' . $apiHash . '',
