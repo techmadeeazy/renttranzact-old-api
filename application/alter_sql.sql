@@ -16,3 +16,6 @@ ADD COLUMN `processor_reference` VARCHAR(45) NULL AFTER `reference`;
 
 ALTER TABLE `rtrans_staging`.`payment_transactions` 
 ADD COLUMN `inspection_booking_id` INT NULL AFTER `processor_reference`;
+
+
+ALTER TABLE `user_profiles` ADD `bank_code` VARCHAR(5) NULL AFTER `rc_number`, ADD `bank_account_number` VARCHAR(10) NULL AFTER `bank_code`, ADD `bank_account_name` VARCHAR(100) NULL AFTER `bank_account_number`;
