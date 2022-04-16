@@ -97,7 +97,7 @@ class Util extends REST_Controller
         ));
 
         $response = curl_exec($curl);
-
+        echo $response;
         curl_close($curl);
         $responseArray = json_decode($response, true);
         if (isset($responseArray['data']['access_token'])) {
