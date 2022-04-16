@@ -53,13 +53,18 @@ class Util extends REST_Controller
 ',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Authorization: Bearer '. $remitaAccessToken
+                'Authorization: Bearer ' . $remitaAccessToken
             ),
         ));
 
         $response = curl_exec($curl);
         curl_close($curl);
-        echo $response;
+
+        $responseArray = json_decode($response, true);
+        if (isset($responseArray['status']) && $responseArray['status'] == '00') {
+            $this->response(['status' => 'success', 'data' => ['account_number' => $responseArray['data']['sourceAccount'], 'bank_code' => $responseArray['data']['sourceBankCode'], 'account_name' => $responseArray['data']['sourceAccountName']]]);
+        }
+        $this->response(['status' => 'fail', 'message' => $responseArray['message']]);
     }
 
     private function getRemitaAccessToken()
