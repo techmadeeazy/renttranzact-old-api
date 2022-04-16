@@ -101,6 +101,7 @@ class Payment extends REST_Controller
             ),
         ));
         $jsopResponse = curl_exec($curl);
+        log_message('debug','getRemitaRRR:'.$jsopResponse);
         curl_close($curl);
         $response = json_decode(trim($jsopResponse, "jsonp ( )"), true);
         if (isset($response['statuscode']) && $response['statuscode'] == '025') {
@@ -116,9 +117,9 @@ class Payment extends REST_Controller
         $this->load->config('app');
         $orderId = md5(time());
         $totalAmount = 100;
-
+        $otherData = ['first_name' => 'Joe', 'last_name' => 'Olu','email_address' => 'temidayo@expertfingers.com','phone' => '08034760836'];
         $this->response([
-            'status' => 'success', 'data' => ['RRR' => $this->getRemitaRRR($orderId, $totalAmount)]
+            'status' => 'success', 'data' => ['RRR' => $this->getRemitaRRR($orderId, $totalAmount,$otherData)]
         ]);
     }
 }
