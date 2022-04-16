@@ -100,10 +100,10 @@ class Util extends REST_Controller
         //echo $response;
         curl_close($curl);
         $responseArray = json_decode($response, true);
-        if (isset($responseArray['data'][0]['access_token'])) {
+        if (isset($responseArray['data'][0]['accessToken'])) {
             //@TODO: log this
-            $responseArray['access_token_status'] = write_file(APPPATH . 'config/remita_access_token.php', $responseArray['data'][0]['access_token']);
-            return $responseArray['data'][0]['access_token'];
+            $responseArray['access_token_status'] = write_file(APPPATH . 'config/remita_access_token.php', $responseArray['data'][0]['accessToken']);
+            return $responseArray['data'][0]['accessToken'];
         }
         return null;
     }
