@@ -34,6 +34,7 @@ class Util extends REST_Controller
         $bankCode = $this->post('bank_code');
 
         $remitaAccessToken = $this->getRemitaAccessToken();
+        echo 'toekn: '.$remitaAccessToken;
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
