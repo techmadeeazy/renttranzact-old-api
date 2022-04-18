@@ -127,11 +127,11 @@ class Payment extends REST_Controller
     {
         $this->load->config('app');
         $apiKey = $this->config->item('remita_api_key');
-        $apiHash = hash('sha512', $rrr.$apiKey.$this->config->item('remita_merchant_id'));
+        $apiHash = hash('sha512', $rrr . $apiKey . $this->config->item('remita_merchant_id'));
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/'.$this->config->item('remita_merchant_id').'/'.$rrr.'/'.$apiHash.'/status.reg',
+            CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/' . $this->config->item('remita_merchant_id') . '/' . $rrr . '/' . $apiHash . '/status.reg',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -141,13 +141,45 @@ class Payment extends REST_Controller
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Authorization: remitaConsumerKey='.$this->config->item('remita_merchant_id').',remitaConsumerToken='.$apiHash.''
+                'Authorization: remitaConsumerKey=' . $this->config->item('remita_merchant_id') . ',remitaConsumerToken=' . $apiHash . ''
             ),
         ));
 
         $response = curl_exec($curl);
 
         curl_close($curl);
-        echo $response;
+        $responseArray = json_decode($response, true);
+        $status = 'pending';
+        if (isset($responseArray['status'])) {
+
+            switch ($responseArray['status']) {
+                case '00':
+                    $status = 'paid';
+                    $this->updatePaymentStatus($rrr);
+                    break;
+                case '021':
+                    $status = 'pending';
+                    break;
+            }
+
+            //  {"amount":100.0,"RRR":"130008289359","orderId":"362ab503bbe5d8a405894f531135eb1d","message":"Successful","paymentDate":"2022-04-18
+            //    01:54:52 PM","transactiontime":"2022-04-18 12:00:00 AM","status":"00"}
+            $this->response(['status' => 'success', 'data' => ['status' => $status, 'amount' => $responseArray['amount'], 'RRR' => $rrr]]);
+        }
+        //echo $response;
+        $this->response(['status' => 'fail', 'message' => 'Status cannot be retrieved', 'debug' => $response]);
+    }
+    private function updatePaymentStatus($processorReference)
+    {
+        $this->load->model('InspectionBooking_model');
+        $this->load->model('Payment_model');
+        $paymentData = $this->Payment_model->getBy($processorReference, 'processor_reference');
+        if (!empty($paymentData)) {
+            //update
+            //updateById($data, $id)
+            $this->Payment_model->updateById(['payment_status' => 'successful'], $paymentData['id']);
+            //update inspection booking id
+            $this->InspectionBooking_model->updateById(['status' => 'paid'], $paymentData['inspection_booking_id']);
+        }
     }
 }
