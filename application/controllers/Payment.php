@@ -125,10 +125,13 @@ class Payment extends REST_Controller
 
     public function status_get($rrr)
     {
-        $curl = curl_init();
+        $this->load->config('app');
+        $apiKey = $this->config->item('remita_api_key');
+        $apiHash = hash('sha512', $rrr.$apiKey.$this->config->item('remita_merchant_id'));
 
+        $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/2547916/'.$rrr.'/6e1dbad58c19e9e76f79f98a27e4e1ff8e50ddfb19d4534d5137223fbfe8ce6c0c7a3f3548c3e0a379b7396789fd88c45cdd2432b1c96e25f49a33ae98b695d2/status.reg',
+            CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/'.$this->config->item('remita_merchant_id').'/'.$rrr.'/'.$apiHash.'/status.reg',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -138,7 +141,7 @@ class Payment extends REST_Controller
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Authorization: remitaConsumerKey=2547916,remitaConsumerToken=6e1dbad58c19e9e76f79f98a27e4e1ff8e50ddfb19d4534d5137223fbfe8ce6c0c7a3f3548c3e0a379b7396789fd88c45cdd2432b1c96e25f49a33ae98b695d2'
+                'Authorization: remitaConsumerKey='.$this->config->item('remita_merchant_id').',remitaConsumerToken='.$apiHash.''
             ),
         ));
 
