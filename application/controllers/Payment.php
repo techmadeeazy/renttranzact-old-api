@@ -35,7 +35,7 @@ class Payment extends REST_Controller
         $loginToken = $this->post('token');
         $this->load->model('UserAuth_model');
         $this->load->model('UserProfile_model');
-        
+
         $userData = $this->UserAuth_model->getById($userAuthId);
         $userData['profile'] = $this->UserProfile_model->getBy($userData['id'], 'user_auth_id');
         $bookingId = $this->post('booking_id');
@@ -56,13 +56,13 @@ class Payment extends REST_Controller
             $reference = random_string('md5');
             $totalAmount = floatval($bookingData['agreed_amount']) + floatval($bookingData['caution_fee']);
             $this->load->model('Payment_model');
-            $processorReference = $this->getRemitaRRR($reference, $totalAmount,$userData['profile']);
-            if(empty($processorReference)){
-                $this->response(['status' => 'fail', 'message' => 'Reference(RRR) cannot be generated']);        
+            $processorReference = $this->getRemitaRRR($reference, $totalAmount, $userData['profile']);
+            if (empty($processorReference)) {
+                $this->response(['status' => 'fail', 'message' => 'Reference(RRR) cannot be generated']);
             }
             $paymentData = ['reference' => $reference, 'processor_reference' => $processorReference, 'inspection_booking_id' => $bookingData['id'], 'amount' => $totalAmount, 'user_id' => $userAuthId,];
             $this->Payment_model->insertData($paymentData);
-            $paymentData['payment_url'] = 'https://remitademo.net/remita/onepage/biller/'.$processorReference.'/payment.spa';
+            $paymentData['payment_url'] = 'https://remitademo.net/remita/onepage/biller/' . $processorReference . '/payment.spa';
             $this->response(['status' => 'success', 'message' => 'Payment started', 'data' => $paymentData]);
         }
         $this->response(['status' => 'fail', 'message' => 'Please login']);
@@ -90,9 +90,9 @@ class Payment extends REST_Controller
               "serviceTypeId": "' . $this->config->item('remita_service_type_id') . '",
               "amount": ' . $totalAmount . ',
               "orderId": "' . $orderId . '",
-              "payerName": "'.$otherData['first_name'].' '.$otherData['last_name'].'",
-              "payerEmail": "'.$otherData['email_address'].'",
-              "payerPhone": "'.$otherData['phone'].'",
+              "payerName": "' . $otherData['first_name'] . ' ' . $otherData['last_name'] . '",
+              "payerEmail": "' . $otherData['email_address'] . '",
+              "payerPhone": "' . $otherData['phone'] . '",
               "description": "Payment to RentTranzact"
           }',
             CURLOPT_HTTPHEADER => array(
@@ -101,7 +101,7 @@ class Payment extends REST_Controller
             ),
         ));
         $jsopResponse = curl_exec($curl);
-        log_message('debug','getRemitaRRR:'.$jsopResponse);
+        log_message('debug', 'getRemitaRRR:' . $jsopResponse);
         curl_close($curl);
         $response = json_decode(trim($jsopResponse, "jsonp ( )"), true);
         if (isset($response['statuscode']) && $response['statuscode'] == '025') {
@@ -117,9 +117,34 @@ class Payment extends REST_Controller
         $this->load->config('app');
         $orderId = md5(time());
         $totalAmount = 100;
-        $otherData = ['first_name' => 'Joe', 'last_name' => 'Olu','email_address' => 'temidayo@expertfingers.com','phone' => '08034760836'];
+        $otherData = ['first_name' => 'Joe', 'last_name' => 'Olu', 'email_address' => 'temidayo@expertfingers.com', 'phone' => '08034760836'];
         $this->response([
-            'status' => 'success', 'data' => ['RRR' => $this->getRemitaRRR($orderId, $totalAmount,$otherData)]
+            'status' => 'success', 'data' => ['RRR' => $this->getRemitaRRR($orderId, $totalAmount, $otherData)]
         ]);
+    }
+
+    public function status_get($rrr)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/2547916/'.$rrr.'/6e1dbad58c19e9e76f79f98a27e4e1ff8e50ddfb19d4534d5137223fbfe8ce6c0c7a3f3548c3e0a379b7396789fd88c45cdd2432b1c96e25f49a33ae98b695d2/status.reg',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Authorization: remitaConsumerKey=2547916,remitaConsumerToken=6e1dbad58c19e9e76f79f98a27e4e1ff8e50ddfb19d4534d5137223fbfe8ce6c0c7a3f3548c3e0a379b7396789fd88c45cdd2432b1c96e25f49a33ae98b695d2'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
     }
 }
