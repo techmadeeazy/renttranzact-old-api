@@ -169,6 +169,7 @@ class Payment extends REST_Controller
         //echo $response;
         $this->response(['status' => 'fail', 'message' => 'Status cannot be retrieved', 'debug' => $response]);
     }
+    
     private function updatePaymentStatus($processorReference)
     {
         $this->load->model('InspectionBooking_model');
