@@ -21,3 +21,6 @@ ADD COLUMN `inspection_booking_id` INT NULL AFTER `processor_reference`;
 ALTER TABLE `user_profiles` ADD `bank_code` VARCHAR(5) NULL AFTER `rc_number`, ADD `bank_account_number` VARCHAR(10) NULL AFTER `bank_code`, ADD `bank_account_name` VARCHAR(100) NULL AFTER `bank_account_number`;
 
 ALTER TABLE `payment_transactions`  ADD `payment_status` ENUM('pending','successful','failed') NOT NULL DEFAULT 'pending'  AFTER `inspection_booking_id`;
+
+ALTER TABLE `user_profiles` 
+ADD COLUMN `company_name` VARCHAR(45) NULL AFTER `bank_account_name`;
