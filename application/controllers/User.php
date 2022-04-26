@@ -76,11 +76,16 @@ class User extends REST_Controller
     {
         $this->load->model('UserAuth_model');
         $referralCode = $this->post('referral_code');
-        $data = ['account_type' => $this->post('account_type'), 'username' => $this->post('username'), 'pwd' => hash('sha1', $this->post('pwd'))];
+        $data = ['account_type' => $this->post('account_type'), 'email_address' => $this->post('email_address'), 'username' => $this->post('username'), 'pwd' => hash('sha1', $this->post('pwd'))];
+        
         //confirm that username does not exist
         $userData = $this->UserAuth_model->getBy($this->post('username'), 'username');
         if (!empty($userData)) {
             $this->response(['status' => 'fail', 'data' => [], 'message' => 'Username already exits']);
+        }
+        $userData = $this->UserAuth_model->getBy($this->post('email_address'), 'email_address');
+        if (!empty($userData)) {
+            $this->response(['status' => 'fail', 'data' => [], 'message' => 'Email already exits']);
         }
         //confirm that refferrer exists
         if (!empty($referralCode)) {
@@ -101,7 +106,7 @@ class User extends REST_Controller
     {
         $this->load->model('UserProfile_model');
         $data = [
-            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('email_address'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'),'company_name' => $this->post('company_name')
+            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('email_address'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'company_name' => $this->post('company_name')
         ];
 
         //confirm that profile does not initially exist
@@ -133,7 +138,7 @@ class User extends REST_Controller
     {
         $this->load->model('UserProfile_model');
         $data = [
-            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('email_address'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'),'bank_code' => $this->post('bank_code'), 'bank_account_number' => $this->post('bank_account_number'),'bank_account_name' => $this->post('bank_account_name')
+            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('email_address'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'bank_code' => $this->post('bank_code'), 'bank_account_number' => $this->post('bank_account_number'), 'bank_account_name' => $this->post('bank_account_name')
         ];
 
         //update only data that is not empty

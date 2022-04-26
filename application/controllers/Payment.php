@@ -169,7 +169,7 @@ class Payment extends REST_Controller
         //echo $response;
         $this->response(['status' => 'fail', 'message' => 'Status cannot be retrieved', 'debug' => $response]);
     }
-    
+
     private function updatePaymentStatus($processorReference)
     {
         $this->load->model('InspectionBooking_model');
@@ -181,6 +181,81 @@ class Payment extends REST_Controller
             $this->Payment_model->updateById(['payment_status' => 'successful'], $paymentData['id']);
             //update inspection booking id
             $this->InspectionBooking_model->updateById(['status' => 'paid'], $paymentData['inspection_booking_id']);
+        }
+    }
+
+    public function create_mandate_post()
+    {
+        $userAuthId = $this->post('user_auth_id');
+        $loginToken = $this->post('token');
+        $monthlyAmount = $this->post('amount');
+
+        $this->load->config('app');
+        $requestId = random_string('md5');
+        $apiKey = $this->config->item('remita_api_key');
+        //merchantId+serviceTypeId+requestId+amt+api_key
+        $apiHash = hash('sha512', $this->config->item('remita_merchant_id') . $this->config->item('remita_service_type_id')
+            . $requestId . $monthlyAmount . $apiKey);
+
+        $this->load->model('UserAuth_model');
+        $this->load->model('UserProfile_model');
+
+        $userData = $this->UserAuth_model->getById($userAuthId);
+        $userData['profile'] = $this->UserProfile_model->getBy($userData['id'], 'user_auth_id');
+        if (isset($userData['token']) && $userData['token'] === $loginToken) {
+            //start remita mandate process
+            $this->load->helper('string');
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/echannel/mandate/setup',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
+      "merchantId":"' . $this->config->item('remita_merchant_id') . '",
+      "serviceTypeId":"' . $this->config->item('remita_service_type_id') . '",
+      "requestId":"' . $requestId . '",
+      "hash":"'.$apiHash.'",
+      "payerName":"Joe Olu",
+      "payerEmail":"temidayo.joe@gmail.com",
+      "payerPhone":"08034760836",
+      "payerBankCode":"044",
+      "payerAccount":"4589999044",
+      "amount":"'.$monthlyAmount.'",
+      "startDate":"",
+      "endDate":"",
+      "mandateType":"DD",
+      "maxNoOfDebits": "3"
+}',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            echo $response;
+        }
+    }
+    private function createMandateSchedule()
+    {
+        $date = new DateTime('31-08-2015');
+
+        function getCutoffDate($date)
+        {
+            $days = cal_days_in_month(CAL_GREGORIAN, $date->format('n'), $date->format('Y'));
+            $date->add(new DateInterval('P' . $days . 'D'));
+            return $date;
+        }
+
+        for ($i = 0; $i < 5; $i++) {
+            $date = getCutoffDate($date);
+            echo $date->format('d-m-Y') . '<br>';
         }
     }
 }

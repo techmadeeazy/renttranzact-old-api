@@ -24,3 +24,6 @@ ALTER TABLE `payment_transactions`  ADD `payment_status` ENUM('pending','success
 
 ALTER TABLE `user_profiles` 
 ADD COLUMN `company_name` VARCHAR(45) NULL AFTER `bank_account_name`;
+
+ALTER TABLE `user_auths` 
+ADD COLUMN `email_address` VARCHAR(100) NOT NULL AFTER `username`;
