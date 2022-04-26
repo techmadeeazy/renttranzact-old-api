@@ -77,7 +77,7 @@ class User extends REST_Controller
         $this->load->model('UserAuth_model');
         $referralCode = $this->post('referral_code');
         $data = ['account_type' => $this->post('account_type'), 'email_address' => $this->post('email_address'), 'username' => $this->post('username'), 'pwd' => hash('sha1', $this->post('pwd'))];
-        
+
         //confirm that username does not exist
         $userData = $this->UserAuth_model->getBy($this->post('username'), 'username');
         if (!empty($userData)) {
@@ -285,7 +285,12 @@ class User extends REST_Controller
 
             if ($userAuthId == $bookingData['host_id']) {
                 //approve with caution fee and agreed amount
-                $this->InspectionBooking_model->updateById(['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => $bookStatus], $bookingData['id']);
+                // && strtotime($this->post('start_date'))
+                $updateData = ['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => $bookStatus];
+                $updateData['start_date'] = $this->post('start_date') && strtotime($this->post('start_date')) ? date('Y-m-d', strtotime($this->post('start_date'))) : $bookingData['start_date'];
+                $updateData['end_date'] = $this->post('end_date') && strtotime($this->post('end_date')) ? date('Y-m-d', strtotime($this->post('end_date'))) : $bookingData['end_date'];
+
+                $this->InspectionBooking_model->updateById($updateData, $bookingData['id']);
             }
 
             $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $this->post()]);
