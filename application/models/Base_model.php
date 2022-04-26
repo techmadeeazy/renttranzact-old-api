@@ -110,21 +110,7 @@ class Base_model extends CI_Model
         return $this->db->get('xsell')->result();
     }
 
-    /**
-     * undocumented function
-     *
-     * @return void
-     * @author 
-     * */
-    public function get_loans_patch($limit = NULL)
-    {
-        $this->db->where('patch_status', 0);
-        if ($limit) {
-            $this->db->limit($limit);
-        }
-        return $this->db->get('xsell_patch')->result();
-    }
-
+    
     /**
      * undocumented function
      *

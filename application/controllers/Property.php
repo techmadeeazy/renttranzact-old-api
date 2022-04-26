@@ -200,4 +200,46 @@ class Property extends REST_Controller
 
         $this->response(['status' => 'success', 'data' => $data]);
     }
+
+    public function search_post()
+    {
+        $data = [];
+        //state,lga,status
+        $keyword = $this->post('keyword');
+        $state = $this->post('state');
+        $lga = $this->post('lga');
+        $this->load->model('Base_model');
+        $this->load->model('Property_model');
+        $this->load->model('PropertyImage_model');
+
+        $propertyData = $this->Base_model->get_many('property_listings', "description = '%$keyword%' OR title = '%$keyword%' OR state = '$state' OR lga ='$lga'");
+
+        $responseData = [];
+        $this->load->model('UserAuth_model');
+        $this->load->model('UserProfile_model');
+        foreach ($propertyData as $pd) {
+            //get featured image
+            $imageData = $this->PropertyImage_model->getFeaturedImage($pd['id']);
+            if (empty($userAuthId)) { //only get user data if the user_auth_id is not known
+                $userAuthData =  $this->UserAuth_model->getById($pd['user_auth_id']);
+                $profileData = $this->UserProfile_model->getBy($pd['user_auth_id'], 'user_auth_id');
+                $userData = empty($profileData) ? $userAuthData : array_merge($userAuthData, $profileData);
+                unset($userData['address'], $userData['created'], $userData['modified'], $userData['status'], $userData['primary_role'], $userData['id'], $userData['lga'], $userData['rc_number'], $userData['pwd'], $userData['token'], $userData['token_expire'], $userData['referral_code']);
+                $pd['user'] = $userData;
+            }
+            if (empty($imageData)) {
+                //set default values
+                $pd['image_url'] = 'https://res.cloudinary.com/rent-tranzact-limited/image/upload/v1647366660/bkfn512urnate2dlmxge.jpg';
+                $pd['image_title'] = '';
+            } else {
+                $pd['image_url'] = $imageData['url'];
+                $pd['image_title'] = $imageData['title'];
+            }
+
+            //get images by property id
+            //$pd['images'] = $this->PropertyImage_model->getAllBy($pd['id'], 'property_id');
+            $responseData[] = $pd;
+        }
+        $this->response(['status' => 'success', 'data' => $responseData]);
+    }
 }

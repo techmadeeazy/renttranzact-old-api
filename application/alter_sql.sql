@@ -27,3 +27,8 @@ ADD COLUMN `company_name` VARCHAR(45) NULL AFTER `bank_account_name`;
 
 ALTER TABLE `user_auths` 
 ADD COLUMN `email_address` VARCHAR(100) NOT NULL AFTER `username`;
+
+ALTER TABLE `inspection_bookings` 
+ADD COLUMN `start_date` DATE NULL AFTER `agreed_amount`,
+ADD COLUMN `end_date` DATE NULL AFTER `start_date`,
+CHANGE COLUMN `status` `status` ENUM('pending', 'cancel', 'approve_payment', 'paid', 'complete') NULL DEFAULT 'pending' AFTER `end_date`;
