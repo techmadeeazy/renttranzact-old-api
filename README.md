@@ -1,4 +1,4 @@
-# nuli
+# RentTranzact
 
-#This is the beginning of a payment integration
+#Real Estate powered by blockchain
 
