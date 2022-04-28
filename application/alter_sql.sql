@@ -32,3 +32,12 @@ ALTER TABLE `inspection_bookings`
 ADD COLUMN `start_date` DATE NULL AFTER `agreed_amount`,
 ADD COLUMN `end_date` DATE NULL AFTER `start_date`,
 CHANGE COLUMN `status` `status` ENUM('pending', 'cancel', 'approve_payment', 'paid', 'complete') NULL DEFAULT 'pending' AFTER `end_date`;
+
+ALTER TABLE `property_listings` 
+CHANGE COLUMN `purpose` `purpose` ENUM('Residential', 'Commercial') NULL DEFAULT NULL ;
+
+ALTER TABLE `user_auths` 
+ADD COLUMN `email_verified` TINYINT(1) NULL AFTER `email_address`;
+
+ALTER TABLE `preminders` 
+RENAME TO  `user_password_resets` ;

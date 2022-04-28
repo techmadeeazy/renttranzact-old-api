@@ -20,6 +20,10 @@ class User extends REST_Controller
     {
         $this->response(['Welcome']);
     }
+    public function reset_password()
+    {
+        echo 'Reset Password';
+    }
 
     /**
      * Login with username or password
@@ -298,5 +302,57 @@ class User extends REST_Controller
             $this->response(['status' => 'fail', 'message' => 'Please login']);
         }
         $this->response(['status' => 'fail', 'message' => 'Please login']);
+    }
+
+    public function init_password_reset_post()
+    {
+        $emailAddress = $this->post('email_address');
+        $pageData = [];
+        $this->load->model('Base_model');
+        $result = $this->Base_model->getOneRecord('user_auths', [
+            'email_address' =>  $emailAddress
+        ]);
+        if (!empty($result)) {
+            $this->initiatePasswordReset($result['id'], $result['email_address'], 'User');
+            $this->response(['status' => "success"]);
+        }
+        $this->response(["status" => "fail", "message" => "Email address is not found"]);
+    }
+
+    public function validate_password_reset_post()
+    {
+        //@TODO: validate email address
+        $emailAddress = $this->post('email_address');
+        $code = $this->post('reset_code');
+        $password = $this->post('password');
+        //$confirmPassword = $this->post('confirm_password');
+
+        $this->load->model('Base_model');
+        $this->load->model('UserAuth_model');
+
+        $userData = $this->UserAuth_model->getBy($emailAddress, 'email_address');
+        if (empty($userData)) {
+            $this->response(['status' => "fail", 'message' => 'Invalid account']);
+        }
+
+        
+        $resetData = $this->Base_model->getOneRecord('user_password_resets', [
+            'user_id' =>  $userData['id'], 'code' => $code
+        ]);
+        if (empty($resetData)) {
+            $this->response(['status' => "fail", 'message' => 'Invalid code. Try again']);
+        }
+        //update password
+        $this->UserAuth_model->setPassword($password, $userData['id']);
+        $this->response(["status" => "success", "data" => $resetData]);
+    }
+
+    private function initiatePasswordReset($userId, $emailAddress, $fullName)
+    {
+        $this->load->model('Notification_model');
+        $code = rand(10000, 99999);
+        $pId = $this->Base_model->add('user_password_resets', ['code' => $code, 'user_id' => $userId]);
+        $this->Notification_model->sendPasswordResetEmail($emailAddress, $fullName,  $pId . '-' . $code);
+        $return = TRUE;
     }
 }

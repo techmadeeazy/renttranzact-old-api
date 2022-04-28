@@ -95,21 +95,6 @@ class Base_model extends CI_Model
 
     // End func get
 
-    /**
-     * undocumented function
-     *
-     * @return void
-     * @author 
-     * */
-    public function get_loans($limit = NULL)
-    {
-        $this->db->where('status', 0);
-        if ($limit) {
-            $this->db->limit($limit);
-        }
-        return $this->db->get('xsell')->result();
-    }
-
     
     /**
      * undocumented function

@@ -2,9 +2,9 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class UserAuth_model extends CI_Model
+class PasswordReset_model extends CI_Model
 {
-    private $table = 'user_auths';
+    private $table = 'user_password_resets';
 
     public function __construct()
     {
@@ -36,13 +36,6 @@ class UserAuth_model extends CI_Model
     public function updateById($data, $id)
     {
         $data['modified'] = date("Y-m-d H:i:s");
-        $this->db->where('id', $id);
-        $this->db->update($this->table, $data);
-    }
-    public function setPassword($pwd, $id)
-    {
-        $data['modified'] = date("Y-m-d H:i:s");
-        $data['pwd'] = hash('sha1', $pwd);
         $this->db->where('id', $id);
         $this->db->update($this->table, $data);
     }
