@@ -335,7 +335,7 @@ class User extends REST_Controller
             $this->response(['status' => "fail", 'message' => 'Invalid account']);
         }
 
-        
+
         $resetData = $this->Base_model->getOneRecord('user_password_resets', [
             'user_id' =>  $userData['id'], 'code' => $code
         ]);
@@ -354,5 +354,54 @@ class User extends REST_Controller
         $pId = $this->Base_model->add('user_password_resets', ['code' => $code, 'user_id' => $userId]);
         $this->Notification_model->sendPasswordResetEmail($emailAddress, $fullName,  $pId . '-' . $code);
         $return = TRUE;
+    }
+
+    public function init_email_verify_post()
+    {
+        $emailAddress = $this->post('email_address');
+        $pageData = [];
+        $this->load->model('Base_model');
+        $result = $this->Base_model->getOneRecord('user_auths', [
+            'email_address' =>  $emailAddress
+        ]);
+        if (!empty($result)) {
+            $this->initiateEmailVerify($result['id'], $result['email_address'], 'User');
+            $this->response(['status' => "success"]);
+        }
+        $this->response(["status" => "fail", "message" => "Email address is not found"]);
+    }
+    private function initiateEmailVerify($userId, $emailAddress, $fullName)
+    {
+        $this->load->model('Notification_model');
+        $code = rand(10000, 99999);
+        $pId = $this->Base_model->add('verify_codes', ['code' => $code, 'user_id' => $userId]);
+        $this->Notification_model->sendVerifyEmail($emailAddress, $fullName,  $code);
+        $return = TRUE;
+    }
+
+    public function validate_email_verify_post()
+    {
+        //@TODO: validate email address
+        $emailAddress = $this->post('email_address');
+        $code = $this->post('verify_code');
+
+        $this->load->model('Base_model');
+        $this->load->model('UserAuth_model');
+
+        $userData = $this->UserAuth_model->getBy($emailAddress, 'email_address');
+        if (empty($userData)) {
+            $this->response(['status' => "fail", 'message' => 'Invalid account']);
+        }
+
+
+        $resetData = $this->Base_model->getOneRecord('verify_codes', [
+            'user_id' =>  $userData['id'], 'code' => $code
+        ]);
+        if (empty($resetData)) {
+            $this->response(['status' => "fail", 'message' => 'Invalid code. Try again']);
+        }
+        //update password
+        $this->UserAuth_model->updateById(['email_verified' => 1], $userData['id']);
+        $this->response(["status" => "success", "data" => $resetData]);
     }
 }

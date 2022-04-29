@@ -17,39 +17,26 @@ class Notification_model extends CI_Model
   public function __construct()
   {
     parent::__construct();
-    //$this->load->database();
   }
+  public function sendVerifyEmail($toEmail, $fullName, $code)
+  {
+    $subject = "[Password Reset] -  RentTranzact";
+    $body = "Dear $fullName, <br> "
+      . "<br>Use the code to verify your email address : $code"
+      . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
+      . "<br><br>Regards,<br><br> RentTranzact Team.";
+    $this->sendMail($toEmail, $fullName, $subject, $body);
+  }
+
   public function sendPasswordResetEmail($toEmail, $fullName, $code)
   {
-    $mail = new PHPMailer();
-    //$mail->SMTPDebug = 3;                               // Enable verbose debug output outlook.smtp.com
-    $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = 'mail.renttranzact.com';  // Specify main and backup SMTP servers
-    $mail->SMTPAuth = true;                               // Enable SMTP authentication
-    $mail->Username = 'noreply@renttranzact.com';                 // SMTP username
-    $mail->Password = '!sp?5WmVn)LC';                           // SMTP password
-    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-    $mail->Port = 587;                                    // TCP port to connect to
-    //$mail->addBCC('');
-    $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->setFrom('noreply@renttranzact.com', 'RentTranzact');
-    $mail->addAddress($toEmail, $fullName);
-    $mail->Subject = "[Password Reset] -  RentTranzact";
-    $mail->Body = "Dear $fullName, <br> Your  registered  e-mail address
+    $subject = "[Password Reset] -  RentTranzact";
+    $body = "Dear $fullName, <br> Your  registered  e-mail address
         on RentTranzact requested for your login details."
       . "<br>Use the code to reset your password : $code"
       . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
       . "<br><br>Regards,<br><br> RentTranzact Team.";
-    $mail->AltBody = $mail->Body;
-    //echo $mail->AltBody;
-    if (!$mail->send()) {
-      //this should be logged
-      // echo 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo;
-      log_message('error', 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
-    } else {
-      // echo 'Message has been sent';
-      log_message('info', 'Message has been sent');
-    }
+    $this->sendMail($toEmail, $fullName, $subject, $body);
   }
 
   public function sendRegistrationEmail($toEmail, $fullName, $reference)
@@ -94,7 +81,7 @@ class Notification_model extends CI_Model
     $mail->Host = 'mail.renttranzact.com';  // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
     $mail->Username = 'noreply@renttranzact.com';                 // SMTP username
-    $mail->Password = '!sp?5WmVn)LC';                           // SMTP password
+    $mail->Password = 'TTf$+%*#rplh';                           // SMTP password
     $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 587;                                    // TCP port to connect to
     //$mail->addBCC('');
