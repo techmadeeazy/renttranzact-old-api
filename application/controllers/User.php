@@ -404,4 +404,23 @@ class User extends REST_Controller
         $this->UserAuth_model->updateById(['email_verified' => 1], $userData['id']);
         $this->response(["status" => "success", "data" => $resetData]);
     }
+    public function review_post()
+    {
+        $reviewerId = $this->post('reviewer_id');
+        $reviewedId = $this->post('reviewed_id');
+        $score = $this->post('score');
+        $scoreText = $this->post('score_text');
+        $this->load->model('Base_model');
+        $result = $this->Base_model->add('user_reviews', [
+            'reviewer_id' =>  $reviewerId, 'reviewed_id' => $reviewedId, 'score' => $score, 'score_text' => $scoreText,'created' => date("Y-m-d H:i:s")
+        ]);
+        $this->response(["status" => "success", "data" => ['id' => $result]]);
+    }
+
+    public function review_get()
+    {
+        $this->load->model('Base_model');
+        $result = $this->Base_model->get_many('user_reviews');
+        $this->response(["status" => "success", "data" => ['id' => $result]]);
+    }
 }

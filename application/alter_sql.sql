@@ -41,3 +41,14 @@ ADD COLUMN `email_verified` TINYINT(1) NULL AFTER `email_address`;
 
 ALTER TABLE `preminders` 
 RENAME TO  `user_password_resets` ;
+
+ALTER TABLE `user_reviews` 
+ADD COLUMN `score` TINYINT(1) NULL AFTER `reviewed_id`,
+CHANGE COLUMN `review` `score_description` VARCHAR(50) NULL DEFAULT NULL ;
+
+ALTER TABLE `user_reviews` 
+CHANGE COLUMN `score_description` `score_text` VARCHAR(50) NULL DEFAULT NULL ;
+
+ALTER TABLE `property_reviews` 
+CHANGE COLUMN `reviewed_id` `property_id` INT NOT NULL ;
+

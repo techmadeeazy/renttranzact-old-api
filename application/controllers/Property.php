@@ -242,4 +242,24 @@ class Property extends REST_Controller
         }
         $this->response(['status' => 'success', 'data' => $responseData]);
     }
+
+    public function review_post()
+    {
+        $reviewerId = $this->post('reviewer_id');
+        $reviewedId = $this->post('property_id');
+        $score = $this->post('score');
+        $scoreText = $this->post('score_text');
+        $this->load->model('Base_model');
+        $result = $this->Base_model->add('property_reviews', [
+            'reviewer_id' =>  $reviewerId, 'property_id' => $reviewedId, 'score' => $score, 'score_text' => $scoreText,'created' => date("Y-m-d H:i:s")
+        ]);
+        $this->response(["status" => "success", "data" => ['id' => $result]]);
+    }
+
+    public function review_get()
+    {
+        $this->load->model('Base_model');
+        $result = $this->Base_model->get_many('property_reviews');
+        $this->response(["status" => "success", "data" => ['id' => $result]]);
+    }
 }

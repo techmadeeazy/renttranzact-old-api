@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -17,9 +16,6 @@ class Base_model extends CI_Model
         parent::__construct();
         $this->load->database();
     }
-
-    // End func __construct
-
     /**
      * Get all from a table
      * 
@@ -116,7 +112,7 @@ class Base_model extends CI_Model
      * 
      * @access public 
      */
-    public function add($table, $data, $id = false)
+    public function add($table, $data, $id = true)
     {
 
         if (empty($data) or empty($table)) {
@@ -145,8 +141,6 @@ class Base_model extends CI_Model
         if (empty($data) || empty($table)) {
             return false;
         }
-
-
         $this->db->update($table, $data, $where);
         return $this->db->affected_rows() > 0;
     }
@@ -160,7 +154,6 @@ class Base_model extends CI_Model
      */
     public function delete($table, $where)
     {
-
         if (empty($where) or empty($table)) {
             return false;
         }
@@ -188,29 +181,5 @@ class Base_model extends CI_Model
     public function get_db()
     {
         return $this->db;
-    }
-
-    /**
-     * undocumented function
-     *
-     * @return void
-     * @author 
-     * */
-    public function truncate($table)
-    {
-        $this->db->truncate($table);
-    }
-
-    /**
-     * undocumented function
-     *
-     * @return void
-     * @author 
-     * */
-    public function get_failed_queue()
-    {
-        $this->db->where('created_timestamp >', '2019-02-28 00:00:00');
-        $this->db->where_in('verification_status', ['failed', 'queued']);
-        return $this->db->get('queued_transactions')->result();
     }
 }

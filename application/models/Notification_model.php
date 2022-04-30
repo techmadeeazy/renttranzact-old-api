@@ -78,12 +78,12 @@ class Notification_model extends CI_Model
     $mail = new PHPMailer();
     //$mail->SMTPDebug = 3;                               // Enable verbose debug output outlook.smtp.com
     $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = 'mail.renttranzact.com';  // Specify main and backup SMTP servers
+    $mail->Host = 'smtp.renttranzact.com';  // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
     $mail->Username = 'noreply@renttranzact.com';                 // SMTP username
     $mail->Password = 'TTf$+%*#rplh';                           // SMTP password
     $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-    $mail->Port = 587;                                    // TCP port to connect to
+    $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
     $mail->isHTML(true);                                  // Set email format to HTML
     $mail->setFrom('noreply@renttranzact.com', 'RentTranzact');
