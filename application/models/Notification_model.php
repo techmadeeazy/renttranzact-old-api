@@ -91,7 +91,8 @@ class Notification_model extends CI_Model
     $mail->addAddress($toEmail, $toName);
     $mail->Subject = $subject;
     $mail->Body = $body;
-
+    log_message('debug', 'Similate email sending');
+    return true;
     if (!$mail->send()) {
       log_message('error', 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
       return false;
