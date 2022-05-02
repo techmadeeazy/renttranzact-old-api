@@ -313,8 +313,8 @@ class User extends REST_Controller
             'email_address' =>  $emailAddress
         ]);
         if (!empty($result)) {
-            $this->initiatePasswordReset($result['id'], $result['email_address'], 'User');
-            $this->response(['status' => "success"]);
+            $code = $this->initiatePasswordReset($result['id'], $result['email_address'], 'User');
+            $this->response(['status' => "success", 'debug' => $code]);
         }
         $this->response(["status" => "fail", "message" => "Email address is not found"]);
     }
@@ -353,20 +353,19 @@ class User extends REST_Controller
         $code = rand(10000, 99999);
         $pId = $this->Base_model->add('user_password_resets', ['code' => $code, 'user_id' => $userId]);
         $this->Notification_model->sendPasswordResetEmail($emailAddress, $fullName,  $pId . '-' . $code);
-        $return = TRUE;
+        return $code;
     }
 
     public function init_email_verify_post()
     {
         $emailAddress = $this->post('email_address');
-        $pageData = [];
         $this->load->model('Base_model');
         $result = $this->Base_model->getOneRecord('user_auths', [
             'email_address' =>  $emailAddress
         ]);
         if (!empty($result)) {
-            $this->initiateEmailVerify($result['id'], $result['email_address'], 'User');
-            $this->response(['status' => "success"]);
+            $code = $this->initiateEmailVerify($result['id'], $result['email_address'], 'User');
+            $this->response(['status' => "success", 'debug' => $code]);
         }
         $this->response(["status" => "fail", "message" => "Email address is not found"]);
     }
@@ -376,7 +375,7 @@ class User extends REST_Controller
         $code = rand(10000, 99999);
         $pId = $this->Base_model->add('verify_codes', ['code' => $code, 'user_id' => $userId]);
         $this->Notification_model->sendVerifyEmail($emailAddress, $fullName,  $code);
-        $return = TRUE;
+        return $code; 
     }
 
     public function validate_email_verify_post()

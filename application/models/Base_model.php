@@ -86,7 +86,7 @@ class Base_model extends CI_Model
         }
 
         $res = $this->db->get_where($table, $where);
-        return $res->result();
+        return $res->result_array();
     }
 
     // End func get
