@@ -13,7 +13,6 @@ class User extends REST_Controller
     public function __construct()
     {
         parent::__construct();
-        //$this->load->model('Base_model');
     }
 
     public function index_get()
@@ -198,7 +197,6 @@ class User extends REST_Controller
         //$userAuthData =  $this->UserAuth_model->getById($userAuthId);
         $this->load->model('UserProfile_model');
 
-
         $bookingResponse = [];
         switch ($role) {
             case 'agent':
@@ -208,7 +206,6 @@ class User extends REST_Controller
                     $inspectorData = $this->UserProfile_model->getBy($b['inspector_id'], 'user_auth_id');
                     unset($inspectorData['address'], $inspectorData['created'], $inspectorData['modified'], $inspectorData['status'], $inspectorData['primary_role'], $inspectorData['id'], $inspectorData['lga'], $inspectorData['rc_number']);
                     $b['inspector'] = $inspectorData;
-
                     $bookingResponse[] = $b;
                 }
                 break;
@@ -218,7 +215,6 @@ class User extends REST_Controller
                 $bookingData = $this->InspectionBooking_model->getAllBy($userAuthId, 'inspector_id');
                 foreach ($bookingData as $b) {
                     $propertyData = $this->Property_model->getById($b['property_id']);
-
                     $imageData = $this->PropertyImage_model->getFeaturedImage($b['property_id']);
                     if (empty($imageData)) {
                         //set default values
@@ -425,5 +421,28 @@ class User extends REST_Controller
         $this->load->model('Base_model');
         $result = $this->Base_model->get_many('user_reviews');
         $this->response(["status" => "success", "data" => ['id' => $result]]);
+    }
+
+    public function my_favourite_post()
+    {
+        $userAuthId = $this->post('user_auth_id');
+        $loginToken = $this->post('token');
+        $propertyId = $this->post('property_id');
+        $this->load->model('UserAuth_model');
+        $userData = $this->UserAuth_model->getById($userAuthId);
+        if (isset($userData['token']) && $userData['token'] === $loginToken) {
+            $this->load->model('Base_model');
+            $pId = $this->Base_model->add('user_favourites', ['user_auth_id' => $userAuthId, 'property_id' => $propertyId, 'created' => date("Y-m-d")]);
+            $this->response(["status" => "success", "data" => ['id' => $pId]]);
+        } else {
+            $this->response(['status' => 'fail', 'message' => 'Please login']);
+        }
+    }
+
+    public function my_favourite_get($userAuthId)
+    {
+        $this->load->model('Base_model');
+        $result = $this->Base_model->get_many('user_favourites',['user_auth_id' => $userAuthId ]);
+        $this->response(["status" => "success", "data" => $result]);
     }
 }
