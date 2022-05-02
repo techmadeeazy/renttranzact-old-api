@@ -76,7 +76,7 @@ class Notification_model extends CI_Model
   public function sendMail($toEmail, $toName, $subject, $body)
   {
     $mail = new PHPMailer();
-    $mail->SMTPDebug = 3;                               // Enable verbose debug output outlook.smtp.com
+    $mail->SMTPDebug = 0;                               // Enable verbose debug output outlook.smtp.com
     $mail->isSMTP();                                      // Set mailer to use SMTP
     $mail->Host = 'renttranzact.com';  // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
