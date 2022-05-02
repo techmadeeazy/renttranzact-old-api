@@ -257,7 +257,11 @@ class User extends REST_Controller
 
             if ($userAuthId == $bookingData['host_id']) {
                 //approve with caution fee and agreed amount
-                $this->InspectionBooking_model->updateById(['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment'], $bookingData['id']);
+                $updateData = ['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment'];
+                $updateData['start_date'] = $this->post('start_date') && strtotime($this->post('start_date')) ? date('Y-m-d', strtotime($this->post('start_date'))) : $bookingData['start_date'];
+                $updateData['end_date'] = $this->post('end_date') && strtotime($this->post('end_date')) ? date('Y-m-d', strtotime($this->post('end_date'))) : $bookingData['end_date'];
+
+                $this->InspectionBooking_model->updateById($updateData, $bookingData['id']);
             }
 
             $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $this->post()]);
@@ -375,7 +379,7 @@ class User extends REST_Controller
         $code = rand(10000, 99999);
         $pId = $this->Base_model->add('verify_codes', ['code' => $code, 'user_id' => $userId]);
         $this->Notification_model->sendVerifyEmail($emailAddress, $fullName,  $code);
-        return $code; 
+        return $code;
     }
 
     public function validate_email_verify_post()
@@ -411,7 +415,7 @@ class User extends REST_Controller
         $scoreText = $this->post('score_text');
         $this->load->model('Base_model');
         $result = $this->Base_model->add('user_reviews', [
-            'reviewer_id' =>  $reviewerId, 'reviewed_id' => $reviewedId, 'score' => $score, 'score_text' => $scoreText,'created' => date("Y-m-d H:i:s")
+            'reviewer_id' =>  $reviewerId, 'reviewed_id' => $reviewedId, 'score' => $score, 'score_text' => $scoreText, 'created' => date("Y-m-d H:i:s")
         ]);
         $this->response(["status" => "success", "data" => ['id' => $result]]);
     }
