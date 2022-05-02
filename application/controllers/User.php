@@ -442,7 +442,23 @@ class User extends REST_Controller
     public function my_favourite_get($userAuthId)
     {
         $this->load->model('Base_model');
-        $result = $this->Base_model->get_many('user_favourites',['user_auth_id' => $userAuthId ]);
+        $result = $this->Base_model->get_many('user_favourites', ['user_auth_id' => $userAuthId]);
         $this->response(["status" => "success", "data" => $result]);
+    }
+
+    public function remove_my_favourite_post()
+    {
+        $userAuthId = $this->post('user_auth_id');
+        $loginToken = $this->post('token');
+        $propertyId = $this->post('property_id');
+        $this->load->model('UserAuth_model');
+        $userData = $this->UserAuth_model->getById($userAuthId);
+        if (isset($userData['token']) && $userData['token'] === $loginToken) {
+            $this->load->model('Base_model');
+            $pId = $this->Base_model->delete('user_favourites', ['user_auth_id' => $userAuthId, 'property_id' => $propertyId]);
+            $this->response(["status" => "success", 'message' => 'Favourited property removed successfuly', "data" => ['id' => $pId]]);
+        } else {
+            $this->response(['status' => 'fail', 'message' => 'Please login']);
+        }
     }
 }
