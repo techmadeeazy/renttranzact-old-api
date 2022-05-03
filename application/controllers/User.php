@@ -253,7 +253,8 @@ class User extends REST_Controller
 
             if ($userAuthId == $bookingData['host_id']) {
                 //approve with caution fee and agreed amount
-                $updateData = ['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment'];
+                $updateData = ['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment','payment_deadline' => $this->post('payment_deadline')];
+                
                 $updateData['start_date'] = $this->post('start_date') && strtotime($this->post('start_date')) ? date('Y-m-d', strtotime($this->post('start_date'))) : $bookingData['start_date'];
                 $updateData['end_date'] = $this->post('end_date') && strtotime($this->post('end_date')) ? date('Y-m-d', strtotime($this->post('end_date'))) : $bookingData['end_date'];
 

@@ -52,3 +52,6 @@ CHANGE COLUMN `score_description` `score_text` VARCHAR(50) NULL DEFAULT NULL ;
 ALTER TABLE `property_reviews` 
 CHANGE COLUMN `reviewed_id` `property_id` INT NOT NULL ;
 
+ALTER TABLE `inspection_bookings` 
+ADD COLUMN `payment_deadline` DATE NULL AFTER `agreed_amount`;
+
