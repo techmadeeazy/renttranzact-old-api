@@ -219,13 +219,13 @@ class Payment extends REST_Controller
       "merchantId":"' . $this->config->item('remita_merchant_id') . '",
       "serviceTypeId":"' . $this->config->item('remita_service_type_id') . '",
       "requestId":"' . $requestId . '",
-      "hash":"'.$apiHash.'",
+      "hash":"' . $apiHash . '",
       "payerName":"Joe Olu",
       "payerEmail":"temidayo.joe@gmail.com",
       "payerPhone":"08034760836",
       "payerBankCode":"044",
       "payerAccount":"4589999044",
-      "amount":"'.$monthlyAmount.'",
+      "amount":"' . $monthlyAmount . '",
       "startDate":"",
       "endDate":"",
       "mandateType":"DD",
@@ -257,5 +257,12 @@ class Payment extends REST_Controller
             $date = getCutoffDate($date);
             echo $date->format('d-m-Y') . '<br>';
         }
+    }
+
+    public function history_get($userAuthId)
+    {
+        $this->load->model('Base_model');
+        $result = $this->Base_model->get_many('payment_transactions', ['user_id' => $userAuthId]);
+        $this->response(["status" => "success", "data" => $result]);
     }
 }
