@@ -128,9 +128,9 @@ class User extends REST_Controller
         $this->load->model('UserAuth_model');
         $this->load->model('UserProfile_model');
         $userAuthData =  $this->UserAuth_model->getById($userAuthId);
+        unset($userAuthData['pwd']);
         $profileData = $this->UserProfile_model->getBy($userAuthId, 'user_auth_id');
         $data = empty($profileData) ? $userAuthData : array_merge($userAuthData, $profileData);
-        unset($userAuthData['pwd']);
         $this->response(['status' => 'success', 'data' => $data]);
     }
 
@@ -141,7 +141,7 @@ class User extends REST_Controller
     {
         $this->load->model('UserProfile_model');
         $data = [
-            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'email_address' =>  $this->post('email_address'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'bank_code' => $this->post('bank_code'), 'bank_account_number' => $this->post('bank_account_number'), 'bank_account_name' => $this->post('bank_account_name')
+            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'bank_code' => $this->post('bank_code'), 'bank_account_number' => $this->post('bank_account_number'), 'bank_account_name' => $this->post('bank_account_name')
         ];
 
         //update only data that is not empty
@@ -253,8 +253,8 @@ class User extends REST_Controller
 
             if ($userAuthId == $bookingData['host_id']) {
                 //approve with caution fee and agreed amount
-                $updateData = ['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment','payment_deadline' => $this->post('payment_deadline')];
-                
+                $updateData = ['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment', 'payment_deadline' => $this->post('payment_deadline')];
+
                 $updateData['start_date'] = $this->post('start_date') && strtotime($this->post('start_date')) ? date('Y-m-d', strtotime($this->post('start_date'))) : $bookingData['start_date'];
                 $updateData['end_date'] = $this->post('end_date') && strtotime($this->post('end_date')) ? date('Y-m-d', strtotime($this->post('end_date'))) : $bookingData['end_date'];
 

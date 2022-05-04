@@ -55,3 +55,5 @@ CHANGE COLUMN `reviewed_id` `property_id` INT NOT NULL ;
 ALTER TABLE `inspection_bookings` 
 ADD COLUMN `payment_deadline` DATE NULL AFTER `agreed_amount`;
 
+ALTER TABLE `user_profiles` 
+DROP COLUMN `email_address`;
