@@ -18,6 +18,18 @@ class Notification_model extends CI_Model
   {
     parent::__construct();
   }
+
+  public function testSendEmail($toEmail)
+  {
+    $fullName = 'Joe Doe';
+    $subject = "[Email Test] -  RentTranzact";
+    $body = "Dear $fullName, <br> "
+      . "<br>Use the code to verify your email address : " . date('Y:m:d H:i:s')
+      . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
+      . "<br><br>Regards,<br><br> RentTranzact Team.";
+    $this->sendMailTest($toEmail, $fullName, $subject, $body);
+  }
+
   public function sendVerifyEmail($toEmail, $fullName, $code)
   {
     $subject = "[Password Reset] -  RentTranzact";
@@ -93,6 +105,33 @@ class Notification_model extends CI_Model
     $mail->Body = $body;
     log_message('debug', 'Similate email sending');
     return true;
+    if (!$mail->send()) {
+      log_message('error', 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
+      return false;
+    } else {
+      log_message('info', 'Message has been sent');
+      return true;
+    }
+  }
+  public function sendMailTest($toEmail, $toName, $subject, $body)
+  {
+    $mail = new PHPMailer();
+    $mail->SMTPDebug = 3;                               // Enable verbose debug output outlook.smtp.com
+    $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail->Host = 'renttranzact.com';  // Specify main and backup SMTP servers
+    $mail->SMTPAuth = true;                               // Enable SMTP authentication
+    $mail->Username = 'noreply@renttranzact.com';                 // SMTP username
+    $mail->Password = 'TTf$+%*#rplh';                           // SMTP password
+    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+    $mail->Port = 465;                                    // TCP port to connect to
+    //$mail->addBCC('');
+    $mail->isHTML(true);                                  // Set email format to HTML
+    $mail->setFrom('noreply@renttranzact.com', 'RentTranzact');
+
+    $mail->addAddress($toEmail, $toName);
+    $mail->Subject = $subject;
+    $mail->Body = $body;
+    log_message('debug', 'Simulate email sending');
     if (!$mail->send()) {
       log_message('error', 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
       return false;

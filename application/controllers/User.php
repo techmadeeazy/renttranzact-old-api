@@ -462,4 +462,12 @@ class User extends REST_Controller
             $this->response(['status' => 'fail', 'message' => 'Please login']);
         }
     }
+    public function test_email_verify_post()
+    {
+        $emailAddress = $this->post('email_address');
+        $this->load->model('Notification_model');
+        $this->Notification_model->testSendEmail($emailAddress);
+        $this->response(["status" => "success", "message" => "sent"]);
+    }
+
 }
