@@ -38,6 +38,8 @@ class Payment extends REST_Controller
 
         $userData = $this->UserAuth_model->getById($userAuthId);
         $userData['profile'] = $this->UserProfile_model->getBy($userData['id'], 'user_auth_id');
+        $userData['profile']['email_address'] = $userData['email_address'];
+
         $bookingId = $this->post('booking_id');
         if (isset($userData['token']) && $userData['token'] === $loginToken) {
             $this->load->model('InspectionBooking_model');
