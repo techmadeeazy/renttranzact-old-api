@@ -36,6 +36,9 @@ class User extends REST_Controller
         }
         $pwd = $this->post('pwd');
         if (!empty($pwd) && ($userData['pwd'] == hash('sha1', $this->post('pwd')))) {
+            if($userData['blocked'] > 0){
+                $this->response(['status' => 'fail', 'message' => 'Account is blocked. Contact support.']);        
+            }
             unset($userData['pwd']);
             $userData['token'] = md5(time());
             $userData['token_expire'] = time() + (15 * 60);
