@@ -261,10 +261,66 @@ class Payment extends REST_Controller
         }
     }
 
-    public function history_get($userAuthId)
+    /* public function history_get($userAuthId)
     {
         $this->load->model('Base_model');
         $result = $this->Base_model->get_many('payment_transactions', ['user_id' => $userAuthId]);
         $this->response(["status" => "success", "data" => $result]);
+    }
+    */
+
+    public function history_get($userAuthId, $role = '')
+    {
+        $this->load->model('UserAuth_model');
+        $this->load->model('InspectionBooking_model');
+        $this->load->model('Base_model');
+        //$userAuthData =  $this->UserAuth_model->getById($userAuthId);
+        $this->load->model('UserProfile_model');
+
+        $bookingResponse = [];
+        switch ($role) {
+            case 'agent':
+                $bookingData = $this->Base_model->get_many('inspection_bookings', ['host_id' => $userAuthId, 'status' => 'paid']);
+                //$bookingData = $this->InspectionBooking_model->getAllBy($userAuthId, 'host_id');
+                foreach ($bookingData as $b) {
+
+                    $inspectorData = $this->UserProfile_model->getBy($b['inspector_id'], 'user_auth_id');
+                    unset($inspectorData['address'], $inspectorData['created'], $inspectorData['modified'], $inspectorData['status'], $inspectorData['primary_role'], $inspectorData['id'], $inspectorData['lga'], $inspectorData['rc_number']);
+                    $b['inspector'] = $inspectorData;
+                    $bookingResponse[] = $b;
+                }
+                break;
+            case 'tenant':
+                $this->load->model('Property_model');
+                $this->load->model('PropertyImage_model');
+                $bookingData = $this->Base_model->get_many('inspection_bookings', ['inspector_id' => $userAuthId, 'status' => 'paid']);
+                //$bookingData = $this->InspectionBooking_model->getAllBy($userAuthId, 'inspector_id');
+                foreach ($bookingData as $b) {
+                    $propertyData = $this->Property_model->getById($b['property_id']);
+                    $imageData = $this->PropertyImage_model->getFeaturedImage($b['property_id']);
+                    if (empty($imageData)) {
+                        //set default values
+                        $propertyData['image_url'] = 'https://res.cloudinary.com/rent-tranzact-limited/image/upload/v1647366660/bkfn512urnate2dlmxge.jpg';
+                        $propertyData['image_title'] = '';
+                    } else {
+                        $propertyData['image_url'] = $imageData['url'];
+                        $propertyData['image_title'] = $imageData['title'];
+                    }
+
+                    $hostData = $this->UserProfile_model->getBy($b['host_id'], 'user_auth_id');
+                    unset($hostData['address'], $hostData['created'], $hostData['modified'], $hostData['status'], $hostData['primary_role'], $hostData['id'], $hostData['lga'], $hostData['rc_number']);
+                    $b['host'] = $hostData;
+                    $b['property'] = $propertyData;
+                    $bookingResponse[] = $b;
+                }
+                break;
+            default:
+                $bookingData = $this->Base_model->get_many('inspection_bookings', "(inspector_id = $userAuthId OR host_id = $userAuthId ) AND 'status' = 'paid'");
+                foreach ($bookingData as $b) {
+                    $bookingResponse[] = $b;
+                }
+                break;
+        }
+        $this->response(['status' => 'success', 'data' => $bookingResponse]);
     }
 }

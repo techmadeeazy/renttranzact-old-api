@@ -57,3 +57,6 @@ ADD COLUMN `payment_deadline` DATE NULL AFTER `agreed_amount`;
 
 ALTER TABLE `user_profiles` 
 DROP COLUMN `email_address`;
+
+ALTER TABLE `user_auths` 
+ADD COLUMN `blocked` TINYINT(1) NULL DEFAULT 0 AFTER `referral_code`;

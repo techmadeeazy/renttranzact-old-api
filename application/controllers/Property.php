@@ -262,4 +262,16 @@ class Property extends REST_Controller
         $result = $this->Base_model->get_many('property_reviews');
         $this->response(["status" => "success", "data" => ['id' => $result]]);
     }
+
+    public function payment_history_get($propertyId)
+    {
+        $bookingResponse = [];
+        $this->load->model('Base_model');
+        $bookingData = $this->Base_model->get_many('inspection_bookings', ['property_id' => $propertyId, 'status' => 'paid']);
+        foreach ($bookingData as $b) {
+            $bookingResponse[] = $b;
+        }
+        $this->response(['status' => 'success', 'data' => $bookingResponse]);
+    }
+
 }
