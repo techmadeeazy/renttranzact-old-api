@@ -36,8 +36,8 @@ class User extends REST_Controller
         }
         $pwd = $this->post('pwd');
         if (!empty($pwd) && ($userData['pwd'] == hash('sha1', $this->post('pwd')))) {
-            if($userData['blocked'] > 0){
-                $this->response(['status' => 'fail', 'message' => 'Account is blocked. Contact support.']);        
+            if ($userData['blocked'] > 0) {
+                $this->response(['status' => 'fail', 'message' => 'Account is blocked. Contact support.']);
             }
             unset($userData['pwd']);
             $userData['token'] = md5(time());
@@ -102,7 +102,10 @@ class User extends REST_Controller
         }
 
         $id = $this->UserAuth_model->insertData($data);
-        $this->response(['status' => 'success', 'data' => ['user_auth_id' => $id]]);
+        //send verification email here
+        //initiateEmailVerify($userId, $emailAddress, $fullName)
+        $code = $this->initiateEmailVerify($id, $this->post('email_address'), 'User');
+        $this->response(['status' => 'success', 'data' => ['user_auth_id' => $id], 'debug' => $code]);
     }
 
     /**
@@ -112,7 +115,7 @@ class User extends REST_Controller
     {
         $this->load->model('UserProfile_model');
         $data = [
-            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'),'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'company_name' => $this->post('company_name')
+            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'company_name' => $this->post('company_name')
         ];
 
         //confirm that profile does not initially exist
@@ -472,5 +475,4 @@ class User extends REST_Controller
         $this->Notification_model->testSendEmail($emailAddress);
         $this->response(["status" => "success", "message" => "sent"]);
     }
-
 }
