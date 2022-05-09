@@ -90,16 +90,15 @@ class Notification_model extends CI_Model
     $mail = new PHPMailer();
     $mail->SMTPDebug = 0;                               // Enable verbose debug output outlook.smtp.com
     $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = 'smtppro.zoho.com';  // Specify main and backup SMTP servers
+    $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
-    $mail->Username = 'answers@appreciateme.me';                 // SMTP username
-    $mail->Password = '1q2w3e4R//!';                           // SMTP password
+    $mail->Username = 'noreply@rentranzact.com';                 // SMTP username
+    $mail->Password = 'FN6FXm=M';                           // SMTP password
     $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-    $mail->Port = 587;                                    // TCP port to connect to
+    $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
     $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->setFrom('answers@appreciateme.me', 'RentTranzact');
-
+    $mail->setFrom('noreply@rentranzact.com', 'RentTranzact');
     $mail->addAddress($toEmail, $toName);
     $mail->Subject = $subject;
     $mail->Body = $body;
@@ -116,10 +115,10 @@ class Notification_model extends CI_Model
     $mail = new PHPMailer();
     $mail->SMTPDebug = 3;                               // Enable verbose debug output outlook.smtp.com
     $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = 'renttranzact.com';  // Specify main and backup SMTP servers
+    $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
-    $mail->Username = 'noreply@renttranzact.com';                 // SMTP username
-    $mail->Password = 'TTf$+%*#rplh';                           // SMTP password
+    $mail->Username = 'noreply@rentranzact.com';                 // SMTP username
+    $mail->Password = 'FN6FXm=M';                           // SMTP password
     $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
