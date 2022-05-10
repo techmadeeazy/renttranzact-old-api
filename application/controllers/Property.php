@@ -267,10 +267,18 @@ class Property extends REST_Controller
     {
         $bookingResponse = [];
         $this->load->model('Base_model');
+        $this->load->model('Property_model');
+        $propertyData = $this->Property_model->getById($propertyId);
         $bookingData = $this->Base_model->get_many('inspection_bookings', ['property_id' => $propertyId, 'status' => 'paid']);
+        $this->load->model('UserProfile_model');
         foreach ($bookingData as $b) {
+            $b['host'] = $this->UserProfile_model->getProfile($b['host_id']);
+            $b['inspector'] = $this->UserProfile_model->getProfile($b['inspector_id']);
+            $b['property'] = $propertyData;
             $bookingResponse[] = $b;
+
         }
+        //$bookingResponse['property'] = $propertyData; 
         $this->response(['status' => 'success', 'data' => $bookingResponse]);
     }
 

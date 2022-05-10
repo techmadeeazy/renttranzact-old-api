@@ -26,7 +26,7 @@ class UserProfile_model extends CI_Model
         return $query->row_array();
     }
 
-    public function getBy($byValue,$by='id')
+    public function getBy($byValue, $by = 'id')
     {
         $query = $this->db->query("SELECT * FROM $this->table WHERE $by = '$byValue'");
         return $query->row_array();
@@ -53,6 +53,12 @@ class UserProfile_model extends CI_Model
         return $query->result_array();
     }
 
+    public function getProfile($userAuthId)
+    {
+        $sql = "SELECT user_auths.id AS id, username, email_address, first_name, last_name, phone, whatsapp FROM user_auths LEFT JOIN user_profiles ON user_profiles.user_auth_id = user_auths.id WHERE user_auths.id = '$userAuthId'";
+        $query = $this->db->query($sql);
+        return $query->row_array();
+    }
     public function rawLog($title, $body)
     {
 
