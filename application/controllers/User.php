@@ -473,8 +473,15 @@ class User extends REST_Controller
     public function my_favourite_get($userAuthId)
     {
         $this->load->model('Base_model');
+        $this->load->model('Property_model');
         $result = $this->Base_model->get_many('user_favourites', ['user_auth_id' => $userAuthId]);
-        $this->response(["status" => "success", "data" => $result]);
+        //$b['property'] = $this->Property_model->getById($b['property_id']);
+        $favouriteData = [];
+        foreach ($result as $b) {
+            $b['property'] = $this->Property_model->getById($b['property_id']);
+            $favouriteData[] = $b;
+        }
+        $this->response(["status" => "success", "data" => $favouriteData]);
     }
 
     public function remove_my_favourite_post()
