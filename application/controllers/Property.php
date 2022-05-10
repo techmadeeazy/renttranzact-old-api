@@ -251,7 +251,7 @@ class Property extends REST_Controller
         $scoreText = $this->post('score_text');
         $this->load->model('Base_model');
         $result = $this->Base_model->add('property_reviews', [
-            'reviewer_id' =>  $reviewerId, 'property_id' => $reviewedId, 'score' => $score, 'score_text' => $scoreText,'created' => date("Y-m-d H:i:s")
+            'reviewer_id' =>  $reviewerId, 'property_id' => $reviewedId, 'score' => $score, 'score_text' => $scoreText, 'created' => date("Y-m-d H:i:s")
         ]);
         $this->response(["status" => "success", "data" => ['id' => $result]]);
     }
@@ -259,8 +259,17 @@ class Property extends REST_Controller
     public function review_get()
     {
         $this->load->model('Base_model');
+        $this->load->model('Property_model');
+        $this->load->model('UserProfile_model');
         $result = $this->Base_model->get_many('property_reviews');
-        $this->response(["status" => "success", "data" => ['id' => $result]]);
+        $reviewData = [];
+        foreach ($result as $b) {
+            $b['reviewer'] = $this->UserProfile_model->getProfile($b['reviewer_id']);
+            $b['property'] = $this->Property_model->getById($b['property_id']);
+            $reviewData[] = $b;
+        }
+
+        $this->response(["status" => "success", "data" =>  $reviewData]);
     }
 
     public function payment_history_get($propertyId)
@@ -276,10 +285,8 @@ class Property extends REST_Controller
             $b['inspector'] = $this->UserProfile_model->getProfile($b['inspector_id']);
             $b['property'] = $propertyData;
             $bookingResponse[] = $b;
-
         }
         //$bookingResponse['property'] = $propertyData; 
         $this->response(['status' => 'success', 'data' => $bookingResponse]);
     }
-
 }
