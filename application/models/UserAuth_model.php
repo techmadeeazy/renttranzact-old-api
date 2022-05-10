@@ -39,6 +39,7 @@ class UserAuth_model extends CI_Model
         $this->db->where('id', $id);
         $this->db->update($this->table, $data);
     }
+    
     public function setPassword($pwd, $id)
     {
         $data['modified'] = date("Y-m-d H:i:s");

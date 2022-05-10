@@ -256,12 +256,18 @@ class Property extends REST_Controller
         $this->response(["status" => "success", "data" => ['id' => $result]]);
     }
 
-    public function review_get()
+    public function review_get($propertyId='')
     {
         $this->load->model('Base_model');
         $this->load->model('Property_model');
         $this->load->model('UserProfile_model');
-        $result = $this->Base_model->get_many('property_reviews');
+        if(empty($propertyId)){
+            $result = $this->Base_model->get_many('property_reviews');
+        }
+        else{
+            $result = $this->Base_model->get_many('property_reviews',['id' => $propertyId]);
+        }
+        
         $reviewData = [];
         foreach ($result as $b) {
             $b['reviewer'] = $this->UserProfile_model->getProfile($b['reviewer_id']);

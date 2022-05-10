@@ -423,12 +423,36 @@ class User extends REST_Controller
         $this->response(["status" => "success", "data" => ['id' => $result]]);
     }
 
-    public function review_get()
+    /* public function review_get()
     {
         $this->load->model('Base_model');
         $result = $this->Base_model->get_many('user_reviews');
-        $this->response(["status" => "success", "data" => ['id' => $result]]);
+        $this->response(["status" => "success", "data" =>  $result]);
     }
+    */
+
+
+    public function review_get($userAuthId = '')
+    {
+        $this->load->model('Base_model');
+        $this->load->model('Property_model');
+        $this->load->model('UserProfile_model');
+        if (empty($userAuthId)) {
+            $result = $this->Base_model->get_many('user_reviews');
+        } else {
+            $result = $this->Base_model->get_many('user_reviews', ['reviewed_id' => $userAuthId]);
+        }
+
+        $reviewData = [];
+        foreach ($result as $b) {
+            $b['reviewer'] = $this->UserProfile_model->getProfile($b['reviewer_id']);
+            $b['reviewed'] = $this->UserProfile_model->getProfile($b['reviewed_id']);
+            $reviewData[] = $b;
+        }
+
+        $this->response(["status" => "success", "data" =>  $reviewData]);
+    }
+
 
     public function my_favourite_post()
     {
