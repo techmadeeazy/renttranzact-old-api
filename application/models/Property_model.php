@@ -35,7 +35,7 @@ class Property_model extends CI_Model
     }
 
     public function getAvailableActivePublic() {
-        $query = $this->db->query("SELECT * FROM $this->table WHERE 1 ORDER BY id DESC");
+        $query = $this->db->query("SELECT * FROM $this->table WHERE display = 'public' ORDER BY id DESC");
         return $query->result_array();
     }
 
