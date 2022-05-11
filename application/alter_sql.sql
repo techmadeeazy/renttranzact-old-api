@@ -60,3 +60,7 @@ DROP COLUMN `email_address`;
 
 ALTER TABLE `user_auths` 
 ADD COLUMN `blocked` TINYINT(1) NULL DEFAULT 0 AFTER `referral_code`;
+
+
+ALTER TABLE `property_listings` 
+CHANGE COLUMN `status` `status` ENUM('pending', 'approved') NULL DEFAULT 'pending' ;

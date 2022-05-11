@@ -84,7 +84,7 @@ class Property extends REST_Controller
             $data['lga'] = $this->post('lga');
             $data['asking_price'] = $this->post('asking_price');
             $data['active'] = 0;
-            $data['status'] = 'available';
+            $data['status'] = 'pending';
             $data['no_of_parking_lot'] = $this->post('no_of_parking_lot');
             $data['no_of_bedroom'] = $this->post('no_of_bedroom');
             $data['no_of_toilets'] = $this->post('no_of_toilets');
@@ -177,7 +177,6 @@ class Property extends REST_Controller
         $this->load->model('Property_model');
         $this->load->model('PropertyImage_model');
         $this->load->model('Base_model');
-
 
         $propertyData = $this->Property_model->getById($propertyId);
         if ($propertyData['user_auth_id'] != $userAuthId) {
