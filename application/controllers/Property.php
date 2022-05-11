@@ -256,22 +256,31 @@ class Property extends REST_Controller
         $this->response(["status" => "success", "data" => ['id' => $result]]);
     }
 
-    public function review_get($propertyId='')
+    public function review_get($propertyId = '')
     {
         $this->load->model('Base_model');
         $this->load->model('Property_model');
         $this->load->model('UserProfile_model');
-        if(empty($propertyId)){
+        if (empty($propertyId)) {
             $result = $this->Base_model->get_many('property_reviews');
+        } else {
+            $result = $this->Base_model->get_many('property_reviews', ['property_id' => $propertyId]);
         }
-        else{
-            $result = $this->Base_model->get_many('property_reviews',['id' => $propertyId]);
-        }
-        
+
         $reviewData = [];
         foreach ($result as $b) {
             $b['reviewer'] = $this->UserProfile_model->getProfile($b['reviewer_id']);
             $b['property'] = $this->Property_model->getById($b['property_id']);
+            $imageData = $this->PropertyImage_model->getFeaturedImage($b['property_id']);
+            if (empty($imageData)) {
+                //set default values
+                $b['property']['image_url'] = 'https://res.cloudinary.com/rent-tranzact-limited/image/upload/v1647366660/bkfn512urnate2dlmxge.jpg';
+                $b['property']['image_title'] = '';
+            } else {
+                $b['property']['image_url'] = $imageData['url'];
+                $b['property']['image_title'] = $imageData['title'];
+            }
+
             $reviewData[] = $b;
         }
 
