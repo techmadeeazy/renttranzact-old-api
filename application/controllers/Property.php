@@ -261,6 +261,8 @@ class Property extends REST_Controller
         $this->load->model('Base_model');
         $this->load->model('Property_model');
         $this->load->model('UserProfile_model');
+        $this->load->model('PropertyImage_model');
+        
         if (empty($propertyId)) {
             $result = $this->Base_model->get_many('property_reviews');
         } else {
