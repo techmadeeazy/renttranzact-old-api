@@ -127,7 +127,7 @@ class Property extends REST_Controller
             $data['no_of_bedroom'] = $this->post('no_of_bedroom');
             $data['no_of_toilets'] = $this->post('no_of_toilets');
             $data['type'] = $this->post('type');
-
+            $data['display'] = strtolower($this->post('display')) == 'public' ? 'public' : 'private';
 
             $this->Property_model->updateById($data, $propertyId);
 
@@ -262,7 +262,7 @@ class Property extends REST_Controller
         $this->load->model('Property_model');
         $this->load->model('UserProfile_model');
         $this->load->model('PropertyImage_model');
-        
+
         if (empty($propertyId)) {
             $result = $this->Base_model->get_many('property_reviews');
         } else {
