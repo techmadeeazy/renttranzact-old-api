@@ -78,6 +78,16 @@ class Payment extends REST_Controller
         $apiHash = hash('sha512', $this->config->item('remita_merchant_id') . $this->config->item('remita_service_type_id')
             . $orderId . $totalAmount . $apiKey);
 
+        $postData = '{
+                "serviceTypeId": "' . $this->config->item('remita_service_type_id') . '",
+                "amount": ' . $totalAmount . ',
+                "orderId": "' . $orderId . '",
+                "payerName": "' . $otherData['first_name'] . ' ' . $otherData['last_name'] . '",
+                "payerEmail": "' . $otherData['email_address'] . '",
+                "payerPhone": "' . $otherData['phone'] . '",
+                "description": "Payment to RentTranzact"
+            }';
+        log_message('debug', 'getRemitaRRR:postData:' . $postData);
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $this->config->item('remita_pay_url'),
@@ -88,15 +98,7 @@ class Payment extends REST_Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => '{
-              "serviceTypeId": "' . $this->config->item('remita_service_type_id') . '",
-              "amount": ' . $totalAmount . ',
-              "orderId": "' . $orderId . '",
-              "payerName": "' . $otherData['first_name'] . ' ' . $otherData['last_name'] . '",
-              "payerEmail": "' . $otherData['email_address'] . '",
-              "payerPhone": "' . $otherData['phone'] . '",
-              "description": "Payment to RentTranzact"
-          }',
+            CURLOPT_POSTFIELDS => $postData,
             CURLOPT_HTTPHEADER => array(
                 'Authorization: remitaConsumerKey=' . $this->config->item('remita_merchant_id') . ',remitaConsumerToken=' . $apiHash . '',
                 'Content-Type: application/json'

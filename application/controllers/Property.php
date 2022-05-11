@@ -162,10 +162,29 @@ class Property extends REST_Controller
         }
 
         $this->response(['status' => 'success', 'data' => $result]);
-        /* }
-        else{
-            $this->response(['status' => 'fail','message' => 'Please login', 'debug' => $userData]);
-        }*/
+    }
+
+    public function remove_image_post()
+    {
+        $userAuthId = $this->post('user_auth_id');
+        $loginToken = $this->post('token');
+        $propertyId = $this->post('property_id');
+        $propertyImageId = $this->post('property_image_id');
+
+        //$this->load->model('UserAuth_model');
+        //$userData = $this->UserAuth_model->getById($userAuthId);
+        //if (isset($userData['token']) && $userData['token'] === $loginToken) {
+        $this->load->model('Property_model');
+        $this->load->model('PropertyImage_model');
+        $this->load->model('Base_model');
+
+
+        $propertyData = $this->Property_model->getById($propertyId);
+        if ($propertyData['user_auth_id'] != $userAuthId) {
+            $this->response(['status' => 'fail', 'message' => 'Please login']);
+        }
+        $result = $this->Base_model->delete('property_images', ['id' => $propertyImageId, 'property_id' => $propertyId]);
+        $this->response(['status' => 'success', 'data' => $result]);
     }
 
     /**
