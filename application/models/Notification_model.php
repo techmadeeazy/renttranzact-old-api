@@ -94,7 +94,7 @@ class Notification_model extends CI_Model
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
     $mail->Username = 'noreply@rentranzact.com';                 // SMTP username
     $mail->Password = 'FN6FXm=M';                           // SMTP password
-    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+    $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
     $mail->isHTML(true);                                  // Set email format to HTML
@@ -119,7 +119,7 @@ class Notification_model extends CI_Model
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
     $mail->Username = 'noreply@rentranzact.com';                 // SMTP username
     $mail->Password = 'FN6FXm=M';                           // SMTP password
-    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+    $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
     $mail->isHTML(true);                                  // Set email format to HTML

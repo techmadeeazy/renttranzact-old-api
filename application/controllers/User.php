@@ -378,6 +378,7 @@ class User extends REST_Controller
     }
     private function initiateEmailVerify($userId, $emailAddress, $fullName)
     {
+        $this->load->model('Base_model');
         $this->load->model('Notification_model');
         $code = rand(10000, 99999);
         $pId = $this->Base_model->add('verify_codes', ['code' => $code, 'user_id' => $userId]);
