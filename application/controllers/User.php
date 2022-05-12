@@ -474,6 +474,10 @@ class User extends REST_Controller
     {
         $this->load->model('Base_model');
         $this->load->model('Property_model');
+        $this->load->model('PropertyImage_model');
+        $this->load->model('UserAuth_model');
+        $this->load->model('UserProfile_model');
+
         $result = $this->Base_model->get_many('user_favourites', ['user_auth_id' => $userAuthId]);
         //$b['property'] = $this->Property_model->getById($b['property_id']);
         $favouriteData = [];
@@ -497,7 +501,6 @@ class User extends REST_Controller
             }
             $favouriteData[] = $b;
         }
-
 
         $this->response(["status" => "success", "data" => $favouriteData]);
     }
