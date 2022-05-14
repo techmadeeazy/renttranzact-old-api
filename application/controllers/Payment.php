@@ -58,7 +58,8 @@ class Payment extends REST_Controller
             $reference = random_string('md5');
             $totalAmount = floatval($bookingData['agreed_amount']) + floatval($bookingData['caution_fee']);
             $this->load->model('Payment_model');
-            $processorReference = $this->getRemitaRRR($reference, $totalAmount, $userData['profile']);
+            //$processorReference = $this->getRemitaRRR($reference, $totalAmount, $userData['profile']);
+            $processorReference = $this->getSplitRemitaRRR($reference, $totalAmount, $userData['profile']);
             if (empty($processorReference)) {
                 $this->response(['status' => 'fail', 'message' => 'Reference(RRR) cannot be generated']);
             }
@@ -87,6 +88,71 @@ class Payment extends REST_Controller
                 "payerPhone": "' . $otherData['phone'] . '",
                 "description": "Payment to RentTranzact"
             }';
+        log_message('debug', 'getRemitaRRR:postData:' . $postData);
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->config->item('remita_pay_url'),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $postData,
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: remitaConsumerKey=' . $this->config->item('remita_merchant_id') . ',remitaConsumerToken=' . $apiHash . '',
+                'Content-Type: application/json'
+            ),
+        ));
+        $jsopResponse = curl_exec($curl);
+        log_message('debug', 'getRemitaRRR:' . $jsopResponse);
+        curl_close($curl);
+        $response = json_decode(trim($jsopResponse, "jsonp ( )"), true);
+        if (isset($response['statuscode']) && $response['statuscode'] == '025') {
+            return $response['RRR'];
+        }
+        return null;
+    }
+
+    private  function getSplitRemitaRRR($orderId, $totalAmount, $otherData = '')
+    {
+        $this->load->config('app');
+        $orderId = md5(time());
+        $apiKey = $this->config->item('remita_api_key');
+        $apiHash = hash('sha512', $this->config->item('remita_merchant_id') . $this->config->item('remita_service_type_id')
+            . $orderId . $totalAmount . $apiKey);
+
+        $splitAccount = '"lineItems":[
+            {
+               "lineItemsId":"itemid1",
+               "beneficiaryName":"Alozie Michael",
+               "beneficiaryAccount":"6020067886",
+               "bankCode":"058",
+               "beneficiaryAmount":"7000",
+               "deductFeeFrom":"1"
+            },
+            {
+               "lineItemsId":"itemid2",
+               "beneficiaryName":"Folivi Joshua",
+               "beneficiaryAccount":"0360883515",
+               "bankCode":"058",
+               "beneficiaryAmount":"3000",
+               "deductFeeFrom":"0"
+            }
+         ]';
+
+        $postData = '{
+                "serviceTypeId": "' . $this->config->item('remita_service_type_id') . '",
+                "amount": ' . $totalAmount . ',
+                "orderId": "' . $orderId . '",
+                "payerName": "' . $otherData['first_name'] . ' ' . $otherData['last_name'] . '",
+                "payerEmail": "' . $otherData['email_address'] . '",
+                "payerPhone": "' . $otherData['phone'] . '",
+                "description": "Payment to RentTranzact",
+                ' . $splitAccount . '
+            }';
+
         log_message('debug', 'getRemitaRRR:postData:' . $postData);
         $curl = curl_init();
         curl_setopt_array($curl, array(
