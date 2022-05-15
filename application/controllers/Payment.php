@@ -123,23 +123,34 @@ class Payment extends REST_Controller
         $apiHash = hash('sha512', $this->config->item('remita_merchant_id') . $this->config->item('remita_service_type_id')
             . $orderId . $totalAmount . $apiKey);
 
+        $cautionFee = 0.1 * $totalAmount;
+        $legalFee = 0.1 *  $totalAmount;
+        $agencyFee = 0.1 * $totalAmount;
+
         $splitAccount = '"lineItems":[
             {
-               "lineItemsId":"itemid1",
-               "beneficiaryName":"Alozie Michael",
-               "beneficiaryAccount":"6020067886",
+               "lineItemsId":"CAUTION FEE",
+               "beneficiaryName":"RENT TRANZACT LTD",
+               "beneficiaryAccount":"0088230570",
                "bankCode":"058",
-               "beneficiaryAmount":"7000",
+               "beneficiaryAmount":"'.$cautionFee.'",
                "deductFeeFrom":"1"
             },
             {
-               "lineItemsId":"itemid2",
-               "beneficiaryName":"Folivi Joshua",
+               "lineItemsId":"REFERRAL/AGENT FEE",
+               "beneficiaryName":"RENT TRANZACT LTD",
                "beneficiaryAccount":"0360883515",
                "bankCode":"058",
-               "beneficiaryAmount":"3000",
+               "beneficiaryAmount":"'.$agencyFee.'",
                "deductFeeFrom":"0"
-            }
+            },{
+                "lineItemsId":"LEGAL FEE",
+                "beneficiaryName":"RENT TRANZACT LTD",
+                "beneficiaryAccount":"0088617010",
+                "bankCode":"058",
+                "beneficiaryAmount":"'.$legalFee.'",
+                "deductFeeFrom":"0"
+             }
          ]';
 
         $postData = '{
