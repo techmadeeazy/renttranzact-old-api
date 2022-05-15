@@ -132,7 +132,7 @@ class Payment extends REST_Controller
                "lineItemsId":"CAUTION FEE",
                "beneficiaryName":"RENT TRANZACT LTD",
                "beneficiaryAccount":"0088230570",
-               "bankCode":"058",
+               "bankCode":"232",
                "beneficiaryAmount":"'.$cautionFee.'",
                "deductFeeFrom":"1"
             },
@@ -140,14 +140,14 @@ class Payment extends REST_Controller
                "lineItemsId":"REFERRAL/AGENT FEE",
                "beneficiaryName":"RENT TRANZACT LTD",
                "beneficiaryAccount":"0360883515",
-               "bankCode":"058",
+               "bankCode":"232",
                "beneficiaryAmount":"'.$agencyFee.'",
                "deductFeeFrom":"0"
             },{
                 "lineItemsId":"LEGAL FEE",
                 "beneficiaryName":"RENT TRANZACT LTD",
                 "beneficiaryAccount":"0088617010",
-                "bankCode":"058",
+                "bankCode":"232",
                 "beneficiaryAmount":"'.$legalFee.'",
                 "deductFeeFrom":"0"
              }
