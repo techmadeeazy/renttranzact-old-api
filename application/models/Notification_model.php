@@ -93,7 +93,7 @@ class Notification_model extends CI_Model
     $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
     $mail->Username = 'noreply@rentranzact.com';                 // SMTP username
-    $mail->Password = 'FN6FXm=M';                           // SMTP password
+    $mail->Password = 'Dental123#';                           // SMTP password
     $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
@@ -118,7 +118,7 @@ class Notification_model extends CI_Model
     $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
     $mail->Username = 'noreply@rentranzact.com';                 // SMTP username
-    $mail->Password = 'FN6FXm=M';                           // SMTP password
+    $mail->Password = 'Dental123#';                           // SMTP password
     $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
