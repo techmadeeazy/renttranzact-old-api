@@ -69,9 +69,12 @@ class Payment extends REST_Controller
             if (empty($processorReference)) {
                 $this->response(['status' => 'fail', 'message' => 'Reference(RRR) cannot be generated']);
             }
+            $this->load->config('app');
+            $remitaBaseURL = $this->config->item('remita_base_url');
+
             $paymentData = ['reference' => $reference, 'processor_reference' => $processorReference, 'inspection_booking_id' => $bookingData['id'], 'amount' => $totalAmount, 'user_id' => $userAuthId,];
             $this->Payment_model->insertData($paymentData);
-            $paymentData['payment_url'] = 'https://remitademo.net/remita/onepage/biller/' . $processorReference . '/payment.spa';
+            $paymentData['payment_url'] = $remitaBaseURL . 'remita/onepage/biller/' . $processorReference . '/payment.spa';
             $this->response(['status' => 'success', 'message' => 'Payment started', 'data' => $paymentData]);
         }
         $this->response(['status' => 'fail', 'message' => 'Please login']);
