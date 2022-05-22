@@ -90,10 +90,10 @@ class Notification_model extends CI_Model
     $mail = new PHPMailer();
     $mail->SMTPDebug = 0;                               // Enable verbose debug output outlook.smtp.com
     $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+    $mail->Host = 'smtp.sendgrid.net';  // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
-    $mail->Username = 'noreply@rentranzact.com';                 // SMTP username
-    $mail->Password = 'Dental123#';                           // SMTP password
+    $mail->Username = 'apikey';                 // SMTP username
+    $mail->Password = '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';                           // SMTP password
     $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
@@ -115,15 +115,15 @@ class Notification_model extends CI_Model
     $mail = new PHPMailer();
     $mail->SMTPDebug = 3;                               // Enable verbose debug output outlook.smtp.com
     $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+    $mail->Host = 'smtp.sendgrid.net';  // Specify main and backup SMTP servers
     $mail->SMTPAuth = true;                               // Enable SMTP authentication
-    $mail->Username = 'noreply@rentranzact.com';                 // SMTP username
-    $mail->Password = 'Dental123#';                           // SMTP password
+    $mail->Username = 'apikey';                 // SMTP username
+    $mail->Password = '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';                           // SMTP password
     $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
     $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->setFrom('noreply@renttranzact.com', 'RentTranzact');
+    $mail->setFrom('noreply@rentranzact.com', 'RentTranzact');
 
     $mail->addAddress($toEmail, $toName);
     $mail->Subject = $subject;
