@@ -61,6 +61,7 @@ class Payment extends REST_Controller
             $amountData['agency'] = $bookingData['agreed_amount'] * 0.1;
             $amountData['caution'] =  floatval($bookingData['caution_fee']);
             $totalAmount = floatval($bookingData['agreed_amount']) + floatval($bookingData['caution_fee']) + $amountData['agency'] + $amountData['legal'];
+            $amountData['agreed_amount'] = $bookingData['agreed_amount'];
             $amountData['total'] = $totalAmount;
             $this->load->model('Payment_model');
             //$processorReference = $this->getRemitaRRR($reference, $totalAmount, $userData['profile']);
@@ -151,6 +152,13 @@ class Payment extends REST_Controller
                 "beneficiaryAccount":"0088617010",
                 "bankCode":"232",
                 "beneficiaryAmount":"' . $amountData['legal'] . '",
+                "deductFeeFrom":"0"
+             },{
+                "lineItemsId":"Main amount",
+                "beneficiaryName":"RENT TRANZACT LTD",
+                "beneficiaryAccount":"0087940038",
+                "bankCode":"232",
+                "beneficiaryAmount":"' . $amountData['agreed_amount'] . '",
                 "deductFeeFrom":"0"
              }
          ]';
