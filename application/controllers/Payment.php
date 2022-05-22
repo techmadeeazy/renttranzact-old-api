@@ -141,7 +141,7 @@ class Payment extends REST_Controller
             {
                "lineItemsId":"REFERRAL/AGENT FEE",
                "beneficiaryName":"RENT TRANZACT LTD",
-               "beneficiaryAccount":"0360883515",
+               "beneficiaryAccount":"0088230642",
                "bankCode":"232",
                "beneficiaryAmount":"' . $amountData['agency'] . '",
                "deductFeeFrom":"1"
