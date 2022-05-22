@@ -56,10 +56,15 @@ class Payment extends REST_Controller
             //start remita process
             $this->load->helper('string');
             $reference = random_string('md5');
-            $totalAmount = floatval($bookingData['agreed_amount']) + floatval($bookingData['caution_fee']);
+
+            $amountData['legal'] = $bookingData['agreed_amount'] * 0.1;
+            $amountData['agency'] = $bookingData['agreed_amount'] * 0.1;
+            $amountData['caution'] =  floatval($bookingData['caution_fee']);
+            $totalAmount = floatval($bookingData['agreed_amount']) + floatval($bookingData['caution_fee']) + $amountData['agency'] + $amountData['legal'];
+            $amountData['total'] = $totalAmount;
             $this->load->model('Payment_model');
             //$processorReference = $this->getRemitaRRR($reference, $totalAmount, $userData['profile']);
-            $processorReference = $this->getSplitRemitaRRR($reference, $totalAmount, $userData['profile']);
+            $processorReference = $this->getSplitRemitaRRR($reference, $amountData, $userData['profile']);
             if (empty($processorReference)) {
                 $this->response(['status' => 'fail', 'message' => 'Reference(RRR) cannot be generated']);
             }
@@ -115,17 +120,14 @@ class Payment extends REST_Controller
         return null;
     }
 
-    private  function getSplitRemitaRRR($orderId, $totalAmount, $otherData = '')
+    private  function getSplitRemitaRRR($orderId, $amountData, $otherData = '')
     {
         $this->load->config('app');
         $orderId = md5(time());
         $apiKey = $this->config->item('remita_api_key');
         $apiHash = hash('sha512', $this->config->item('remita_merchant_id') . $this->config->item('remita_service_type_id')
-            . $orderId . $totalAmount . $apiKey);
+            . $orderId . $amountData['total'] . $apiKey);
 
-        $cautionFee = 0.1 * $totalAmount;
-        $legalFee = 0.1 *  $totalAmount;
-        $agencyFee = 0.1 * $totalAmount;
 
         $splitAccount = '"lineItems":[
             {
@@ -133,29 +135,29 @@ class Payment extends REST_Controller
                "beneficiaryName":"RENT TRANZACT LTD",
                "beneficiaryAccount":"0088230570",
                "bankCode":"232",
-               "beneficiaryAmount":"'.$cautionFee.'",
-               "deductFeeFrom":"1"
+               "beneficiaryAmount":"' . $amountData['caution'] . '",
+               "deductFeeFrom":"0"
             },
             {
                "lineItemsId":"REFERRAL/AGENT FEE",
                "beneficiaryName":"RENT TRANZACT LTD",
                "beneficiaryAccount":"0360883515",
                "bankCode":"232",
-               "beneficiaryAmount":"'.$agencyFee.'",
-               "deductFeeFrom":"0"
+               "beneficiaryAmount":"' . $amountData['agency'] . '",
+               "deductFeeFrom":"1"
             },{
                 "lineItemsId":"LEGAL FEE",
                 "beneficiaryName":"RENT TRANZACT LTD",
                 "beneficiaryAccount":"0088617010",
                 "bankCode":"232",
-                "beneficiaryAmount":"'.$legalFee.'",
+                "beneficiaryAmount":"' . $amountData['legal'] . '",
                 "deductFeeFrom":"0"
              }
          ]';
 
         $postData = '{
                 "serviceTypeId": "' . $this->config->item('remita_service_type_id') . '",
-                "amount": ' . $totalAmount . ',
+                "amount": ' . $amountData['total'] . ',
                 "orderId": "' . $orderId . '",
                 "payerName": "' . $otherData['first_name'] . ' ' . $otherData['last_name'] . '",
                 "payerEmail": "' . $otherData['email_address'] . '",
