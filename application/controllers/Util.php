@@ -34,6 +34,7 @@ class Util extends REST_Controller
         $bankCode = $this->post('bank_code');
 
         $remitaAccessToken = $this->getRemitaAccessToken();
+        log_message('debug','bank_account_enquiry: remita access token:'.$remitaAccessToken);
         $this->load->config('app');
         $remitaBaseURL = $this->config->item('remita_base_url');
 
@@ -64,6 +65,7 @@ class Util extends REST_Controller
         curl_close($curl);
 
         $responseArray = json_decode($response, true);
+        log_message('debug','bank_account_enquiry: response:'.$response);
         if (isset($responseArray['status']) && $responseArray['status'] == '00') {
             $this->response(['status' => 'success', 'data' => ['account_number' => $responseArray['data']['sourceAccount'], 'bank_code' => $responseArray['data']['sourceBankCode'], 'account_name' => $responseArray['data']['sourceAccountName']]]);
         }
