@@ -34,11 +34,14 @@ class Util extends REST_Controller
         $bankCode = $this->post('bank_code');
 
         $remitaAccessToken = $this->getRemitaAccessToken();
+        $this->load->config('app');
+        $remitaBaseURL = $this->config->item('remita_base_url');
+
         //echo 'toekn: '.$remitaAccessToken;
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/rpgsvc/v3/rpg/account/lookup',
+            CURLOPT_URL => $remitaBaseURL.'remita/exapp/api/v1/send/api/rpgsvc/v3/rpg/account/lookup',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
