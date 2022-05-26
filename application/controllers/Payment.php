@@ -16,6 +16,63 @@ class Payment extends REST_Controller
         //$this->load->model('Base_model');
     }
 
+    public function init_renew_get($bookingId)
+    {
+        $this->load->model('InspectionBooking_model');
+
+        $bookingData = $this->InspectionBooking_model->getById($bookingId);
+        if (empty($bookingData)) {
+            $this->response(['status' => 'fail', 'message' => 'Booking is not available']);
+        }
+
+        $this->response(['status' => 'success', 'data' => ['amount' => floatval($bookingData['agreed_amount']), 'agent_fee' => 0, 'legal_fee' => 0, 'caution_fee' => 0]]);
+    }
+
+    public function start_renew_post()
+    {
+        $userAuthId = $this->post('user_auth_id');
+        $loginToken = $this->post('token');
+        $this->load->model('UserAuth_model');
+        $this->load->model('UserProfile_model');
+
+        $userData = $this->UserAuth_model->getById($userAuthId);
+        $userData['profile'] = $this->UserProfile_model->getBy($userData['id'], 'user_auth_id');
+        $userData['profile']['email_address'] = $userData['email_address'];
+        //print_r($userData);
+        $bookingId = $this->post('booking_id');
+        if (isset($userData['token']) && $userData['token'] === $loginToken) {
+            $this->load->model('InspectionBooking_model');
+            //get the booking data
+            $bookingData = $this->InspectionBooking_model->getById($bookingId);
+            if (empty($bookingData)) {
+                $this->response(['status' => 'fail', 'message' => 'Booking is not available']);
+            }
+
+            if ($userAuthId == $bookingData['host_id']) {
+                //approve with caution fee and agreed amount
+                $this->response(['status' => 'fail', 'message' => 'You cannot pay for your own property']);
+            }
+            //start remita process
+            $this->load->helper('string');
+            $reference = random_string('md5');
+
+            $totalAmount = floatval($bookingData['agreed_amount']);
+            $this->load->model('Payment_model');
+            $processorReference = $this->getRemitaRRR($reference, $totalAmount, $userData['profile']);
+            //$processorReference = $this->getSplitRemitaRRR($reference, $amountData, $userData['profile']);
+            if (empty($processorReference)) {
+                $this->response(['status' => 'fail', 'message' => 'Reference(RRR) cannot be generated']);
+            }
+            $this->load->config('app');
+            $remitaBaseURL = $this->config->item('remita_base_url');
+
+            $paymentData = ['reference' => $reference, 'processor_reference' => $processorReference, 'inspection_booking_id' => $bookingData['id'], 'amount' => $totalAmount, 'user_id' => $userAuthId,];
+            $this->Payment_model->insertData($paymentData);
+            $paymentData['payment_url'] = $remitaBaseURL . 'remita/onepage/biller/' . $processorReference . '/payment.spa';
+            $this->response(['status' => 'success', 'message' => 'Payment started', 'data' => $paymentData]);
+        }
+        $this->response(['status' => 'fail', 'message' => 'Please login']);
+    }
 
     public function init_get($bookingId)
     {
@@ -85,18 +142,19 @@ class Payment extends REST_Controller
         $this->load->config('app');
         $orderId = md5(time());
         $apiKey = $this->config->item('remita_api_key');
-        $apiHash = hash('sha512', $this->config->item('remita_merchant_id') . $this->config->item('remita_service_type_id')
+        $apiHash = hash('sha512', $this->config->item('remita_merchant_id') . $this->config->item('remita_service_type_id2')
             . $orderId . $totalAmount . $apiKey);
 
         $postData = '{
-                "serviceTypeId": "' . $this->config->item('remita_service_type_id') . '",
+                "serviceTypeId": "' . $this->config->item('remita_service_type_id2') . '",
                 "amount": ' . $totalAmount . ',
                 "orderId": "' . $orderId . '",
                 "payerName": "' . $otherData['first_name'] . ' ' . $otherData['last_name'] . '",
                 "payerEmail": "' . $otherData['email_address'] . '",
                 "payerPhone": "' . $otherData['phone'] . '",
-                "description": "Payment to RentTranzact"
+                "description": "Renew Payment to RentTranzact"
             }';
+
         log_message('debug', 'getRemitaRRR:postData:' . $postData);
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -177,7 +235,7 @@ class Payment extends REST_Controller
                 ' . $splitAccount . '
             }';
 
-        log_message('debug', 'getRemitaRRR:postData:' . $postData);
+        log_message('debug', 'getSplitRemitaRRR:postData:' . $postData);
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $this->config->item('remita_pay_url'),
