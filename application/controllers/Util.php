@@ -34,7 +34,7 @@ class Util extends REST_Controller
         $bankCode = $this->post('bank_code');
 
         $remitaAccessToken = $this->getRemitaAccessToken();
-        log_message('debug','bank_account_enquiry: remita access token:'.$remitaAccessToken);
+        log_message('debug', 'bank_account_enquiry: remita access token:' . $remitaAccessToken);
         $this->load->config('app');
         $remitaBaseURL = $this->config->item('remita_base_url');
 
@@ -42,7 +42,7 @@ class Util extends REST_Controller
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => $remitaBaseURL.'remita/exapp/api/v1/send/api/rpgsvc/v3/rpg/account/lookup',
+            CURLOPT_URL => $remitaBaseURL . 'remita/exapp/api/v1/send/api/rpgsvc/v3/rpg/account/lookup',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -65,7 +65,7 @@ class Util extends REST_Controller
         curl_close($curl);
 
         $responseArray = json_decode($response, true);
-        log_message('debug','bank_account_enquiry: response:'.$response);
+        log_message('debug', 'bank_account_enquiry: response:' . $response);
         if (isset($responseArray['status']) && $responseArray['status'] == '00') {
             $this->response(['status' => 'success', 'data' => ['account_number' => $responseArray['data']['sourceAccount'], 'bank_code' => $responseArray['data']['sourceBankCode'], 'account_name' => $responseArray['data']['sourceAccountName']]]);
         }
@@ -74,6 +74,7 @@ class Util extends REST_Controller
 
     private function getRemitaAccessToken()
     {
+
         $this->load->helper('file');
 
         $fileInfo = get_file_info(APPPATH . 'config/remita_access_token.php');
@@ -81,11 +82,13 @@ class Util extends REST_Controller
         if ((time() - $fileInfo['date']) < 3600) {
             return file_get_contents(APPPATH . 'config/remita_access_token.php');
         }
+        $this->load->config('app');
+        $remitaBaseURL = $this->config->item('remita_base_url');
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/uaasvc/uaa/token',
+            CURLOPT_URL => $remitaBaseURL . 'remita/exapp/api/v1/send/api/uaasvc/uaa/token',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -94,14 +97,13 @@ class Util extends REST_Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => '{
- "username": "UHSU6ZIMAVXNZHXW",
- "password": "K8JE73OFE508GMOW9VWLX5SLH5QG1PF2"
+ "username": "' . $this->config->item('remita_public_key') . '",
+ "password": "' . $this->config->item('remita_secret_key') . '"
 }
 
 ',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Cookie: JSESSIONID=AVKyxaXKtV3_DXcda1qzxwsE.9eb07e7cd645'
             ),
         ));
 
