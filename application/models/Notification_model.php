@@ -32,7 +32,7 @@ class Notification_model extends CI_Model
 
   public function sendVerifyEmail($toEmail, $fullName, $code)
   {
-    $subject = "[Password Reset] -  RentTranzact";
+    $subject = "[Verification Code] -  RentTranzact";
     $body = "Dear $fullName, <br> "
       . "<br>Use the code to verify your email address : $code"
       . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
