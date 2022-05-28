@@ -126,6 +126,7 @@ class Util extends REST_Controller
         $accountNumber = $this->post('account_number');
         $bankCode = $this->post('bank_code');
         $timeStamp = date('c');
+        $timeStamp = date('Y-m-d\TH:i:s+000000');
         $requestId = time();
         $apiHash = hash('sha512', $this->config->item('remita_api_key2') + $requestId + $this->config->item('remita_api_token'));
 
@@ -139,17 +140,17 @@ class Util extends REST_Controller
             "accountNo":"' . $this->encrypt($accountNumber, $this->config->item('remita_encrypt_vector'), $this->config->item('remita_encrypt_key')) . '",
             "bankCode":"' . $this->encrypt($bankCode, $this->config->item('remita_encrypt_vector'), $this->config->item('remita_encrypt_key')) . '"
          }';
-         $headerData = array(
+        $headerData = array(
             'Content-Type: application/json',
             'MERCHANT_ID: ' . $this->config->item('remita_merchant_id'),
             'API_KEY: ' . $this->config->item('remita_api_key2'),
             'REQUEST_ID: ' . $requestId,
             'REQUEST_TS: ' . $timeStamp,
             'API_DETAILS_HASH: ' . $apiHash
-         );
+        );
 
-         log_message('debug','account_enquiry:body:'.$postData);
-         log_message('debug','account_enquiry:header:'.json_encode($headerData));
+        log_message('debug', 'account_enquiry:body:' . $postData);
+        log_message('debug', 'account_enquiry:header:' . json_encode($headerData));
 
         curl_setopt_array($curl, array(
             CURLOPT_URL => $remitaBaseURL . 'remita/exapp/api/v1/send/api/rpgsvc/rpg/api/v2/merc/fi/account/lookup',
