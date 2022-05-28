@@ -9,3 +9,7 @@ $config['remita_pay_url'] = 'https://login.remita.net/remita/exapp/api/v1/send/a
 $config['remita_base_url'] = 'https://login.remita.net/';
 $config['remita_public_key'] = '6X61DCOEAIKXC3IJ';
 $config['remita_secret_key'] = '47Z20FMR1Y1XSOOHWOOONTXIR2TI79AJ';
+$config['remita_encrypt_key'] = 'wfmjhcstkuxzdpiv';
+$config['remita_encrypt_vector'] = 'zytgdehwpjsqnckf';
+$config['remita_api_key2'] = 'QzAwMDA0NjEzODkxMjM0fEMwMDAwNDYxMzg5';
+$config['remita_api_token'] = 'RFBTbnNHTWJHaVQxNmY4aURXUUw1d3owcDdCakd4b2t0aDJtQmdPQkFIVVVqYVpYMGFvUDFHZzFFK0xISytWWQ==';

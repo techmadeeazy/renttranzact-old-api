@@ -28,7 +28,7 @@ class Util extends REST_Controller
         $this->response(['status' => 'success', 'data' => $bankData]);
     }
 
-    public function bank_account_enquiry_post()
+    public function old_bank_account_enquiry_post()
     {
         $accountNumber = $this->post('account_number');
         $bankCode = $this->post('bank_code');
@@ -117,5 +117,60 @@ class Util extends REST_Controller
             return $responseArray['data'][0]['accessToken'];
         }
         return null;
+    }
+
+    public  function bank_account_enquiry_post()
+    {
+
+        $accountNumber = $this->post('account_number');
+        $bankCode = $this->post('bank_code');
+        $timeStamp = date('c');
+        $requestId = time();
+        $apiHash = hash('sha512', $this->config->item('remita_api_key2') + $requestId + $this->config->item('remita_api_token'));
+
+        $this->load->config('app');
+        $remitaBaseURL = $this->config->item('remita_base_url');
+
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $remitaBaseURL . 'remita/exapp/api/v1/send/api/rpgsvc/rpg/api/v2/merc/fi/account/lookup',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+   "accountNo":"' . $this->encrypt($accountNumber, $this->config->item('remita_encrypt_vector'), $this->config->item('remita_encrypt_key')) . '",
+   "bankCode":"' . $this->encrypt($bankCode, $this->config->item('remita_encrypt_vector'), $this->config->item('remita_encrypt_key')) . '"
+}',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'MERCHANT_ID: ' . $this->config->item('remita_merchant_id'),
+                'API_KEY: ' . $this->config->item('remita_api_key2'),
+                'REQUEST_ID: ' . $requestId,
+                'REQUEST_TS: ' . $timeStamp,
+                'API_DETAILS_HASH: ' . $apiHash
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        //echo $response;
+        $responseArray = json_decode($response, true);
+        log_message('debug', 'bank_account_enquiry: response:' . $response);
+        if (isset($responseArray['status']) && $responseArray['status'] == 'success' && $responseArray['data']['responseCode'] == '00') {
+            $this->response(['status' => 'success', 'data' => ['account_number' => $responseArray['data']['accountNo'], 'bank_code' => $responseArray['data']['044'], 'account_name' => $responseArray['data']['accountName']]]);
+        }
+        $this->response(['status' => 'fail', 'message' => $responseArray['message']]);
+    }
+    private    function encrypt($data, $iv, $key)
+    {
+        $cipherText = trim(base64_encode(openssl_encrypt($data, 'AES-128-CBC', $key, true, $iv)));
+        unset($data, $iv, $key);
+        return $cipherText;
     }
 }
