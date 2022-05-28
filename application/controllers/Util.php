@@ -121,7 +121,7 @@ class Util extends REST_Controller
 
     public  function bank_account_enquiry_post()
     {
-        date_default_timezone_set('Africa/Lagos');
+        date_default_timezone_set('UTC');
 
         $accountNumber = $this->post('account_number');
         $bankCode = $this->post('bank_code');
