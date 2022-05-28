@@ -121,6 +121,7 @@ class Util extends REST_Controller
 
     public  function bank_account_enquiry_post()
     {
+        date_default_timezone_set('Africa/Lagos');
 
         $accountNumber = $this->post('account_number');
         $bankCode = $this->post('bank_code');
@@ -134,6 +135,22 @@ class Util extends REST_Controller
 
         $curl = curl_init();
 
+        $postData = '{
+            "accountNo":"' . $this->encrypt($accountNumber, $this->config->item('remita_encrypt_vector'), $this->config->item('remita_encrypt_key')) . '",
+            "bankCode":"' . $this->encrypt($bankCode, $this->config->item('remita_encrypt_vector'), $this->config->item('remita_encrypt_key')) . '"
+         }';
+         $headerData = array(
+            'Content-Type: application/json',
+            'MERCHANT_ID: ' . $this->config->item('remita_merchant_id'),
+            'API_KEY: ' . $this->config->item('remita_api_key2'),
+            'REQUEST_ID: ' . $requestId,
+            'REQUEST_TS: ' . $timeStamp,
+            'API_DETAILS_HASH: ' . $apiHash
+         );
+
+         log_message('debug','account_enquiry:body:'.$postData);
+         log_message('debug','account_enquiry:header:'.json_encode($headerData));
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => $remitaBaseURL . 'remita/exapp/api/v1/send/api/rpgsvc/rpg/api/v2/merc/fi/account/lookup',
             CURLOPT_RETURNTRANSFER => true,
@@ -143,18 +160,8 @@ class Util extends REST_Controller
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => '{
-   "accountNo":"' . $this->encrypt($accountNumber, $this->config->item('remita_encrypt_vector'), $this->config->item('remita_encrypt_key')) . '",
-   "bankCode":"' . $this->encrypt($bankCode, $this->config->item('remita_encrypt_vector'), $this->config->item('remita_encrypt_key')) . '"
-}',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'MERCHANT_ID: ' . $this->config->item('remita_merchant_id'),
-                'API_KEY: ' . $this->config->item('remita_api_key2'),
-                'REQUEST_ID: ' . $requestId,
-                'REQUEST_TS: ' . $timeStamp,
-                'API_DETAILS_HASH: ' . $apiHash
-            ),
+            CURLOPT_POSTFIELDS => $postData,
+            CURLOPT_HTTPHEADER => $headerData,
         ));
 
         $response = curl_exec($curl);
