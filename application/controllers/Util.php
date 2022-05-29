@@ -119,7 +119,7 @@ class Util extends REST_Controller
         return null;
     }
 
-    public  function bank_account_enquiry_post()
+    public  function i_bank_account_enquiry_post()
     {
         date_default_timezone_set('UTC');
 
@@ -175,10 +175,65 @@ class Util extends REST_Controller
         }
         $this->response(['status' => 'fail', 'message' => $responseArray['message']]);
     }
+
+    public  function bank_account_enquiry_post()
+    {
+
+        $accountNumber = $this->post('account_number');
+        $bankCode = $this->post('bank_code');
+        //log_message('debug', 'account_enquiry:body:' . $postData);
+        //log_message('debug', 'account_enquiry:header:' . json_encode($headerData));
+        $accountName =  $this->flwVerifyBankAccountName($bankCode, $accountNumber);
+
+        log_message('debug', 'bank_account_enquiry: response:' . $accountName);
+        if (empty($accountName)) {
+            $this->response(['status' => 'fail', 'message' => 'Name enquiry failed']);
+        }
+
+        $this->response(['status' => 'success', 'data' => ['account_number' => $accountNumber, 'bank_code' => $bankCode, 'account_name' => $accountName]]);
+    }
+
     private    function encrypt($data, $iv, $key)
     {
         $cipherText = trim(base64_encode(openssl_encrypt($data, 'AES-128-CBC', $key, true, $iv)));
         unset($data, $iv, $key);
         return $cipherText;
+    }
+
+    public function flwVerifyBankAccountName($bankCode, $bankAccountNumber)
+    {
+        $this->load->config('app');
+        $pageData['flw_public_key'] = $this->config->item('flw_sec_key');
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.flutterwave.com/v3/accounts/resolve',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+            "account_number": "' . $bankAccountNumber . '",
+            "account_bank": "' . $bankCode . '"
+        }',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer ' . $this->config->item('flw_sec_key'),
+                'Content-Type: application/json'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        //echo $response;
+        //exit;
+        $responseArray = json_decode($response, TRUE);
+        if (isset($responseArray['status']) &&  ($responseArray['status'] == 'success')) {
+            return $responseArray['data']['account_name'];
+        }
+        return null;
     }
 }

@@ -14,3 +14,6 @@ $config['remita_encrypt_key'] = 'nbzjfdiehurgsxct';
 $config['remita_encrypt_vector'] = 'sngtmqpfurxdbkwj';
 $config['remita_api_key2'] = 'REVNT01EQTEyMzR8REVNT01EQQ==';
 $config['remita_api_token'] = 'bmR1ZFFFWEx5R2c2NmhnMEk5a25WenJaZWZwbHFFYldKOGY0bHlGZnBZQ1N5WEpXU2Y1dGt3PT0=';
+$config['flw_public_key'] = 'FLWPUBK-de3da6078004108092882ad43701f1d1-X';
+$config['flw_sec_key'] = 'FLWSECK-66421fd405a6b7b3b27021ec1fb2d2ce-X';
+$config['flw_enc_key'] = '66421fd405a693330281f18d';
