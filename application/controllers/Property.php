@@ -230,7 +230,7 @@ class Property extends REST_Controller
         $this->load->model('Property_model');
         $this->load->model('PropertyImage_model');
 
-        $propertyData = $this->Base_model->get_many('property_listings', "(status = 'approved') AND description = '%$keyword%' OR title = '%$keyword%' OR state = '$state' OR lga ='$lga'");
+        $propertyData = $this->Base_model->get_many('property_listings', "(status = 'approved' AND active = 1) AND description = '%$keyword%' OR title = '%$keyword%' OR state = '$state' OR lga ='$lga'");
         $responseData = [];
         $this->load->model('UserAuth_model');
         $this->load->model('UserProfile_model');
