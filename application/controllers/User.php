@@ -115,7 +115,7 @@ class User extends REST_Controller
     {
         $this->load->model('UserProfile_model');
         $data = [
-            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'company_name' => $this->post('company_name'),'profile_image_url' => $this->post('profile_image_url')
+            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'company_name' => $this->post('company_name'), 'profile_image_url' => $this->post('profile_image_url')
         ];
 
         //confirm that profile does not initially exist
@@ -147,7 +147,7 @@ class User extends REST_Controller
     {
         $this->load->model('UserProfile_model');
         $data = [
-            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'bank_code' => $this->post('bank_code'), 'bank_account_number' => $this->post('bank_account_number'), 'bank_account_name' => $this->post('bank_account_name'),'profile_image_url' => $this->post('profile_image_url')
+            'user_auth_id' => $this->post('user_auth_id'), 'first_name' => $this->post('first_name'), 'last_name' => $this->post('last_name'), 'phone' => $this->post('phone'), 'gender' => $this->post('gender'), 'address' => $this->post('address'), 'state' => $this->post('state'), 'lga' => $this->post('lga'), 'rc_number' => $this->post('rc_number'), 'bank_code' => $this->post('bank_code'), 'bank_account_number' => $this->post('bank_account_number'), 'bank_account_name' => $this->post('bank_account_name'), 'profile_image_url' => $this->post('profile_image_url')
         ];
 
         //update only data that is not empty
@@ -178,7 +178,7 @@ class User extends REST_Controller
         if (isset($userData['token']) && $userData['token'] === $loginToken) {
             $this->load->model('Property_model');
             $propertyData = $this->Property_model->getById($propertyId);
-            if (empty($propertyData)) {
+            if (empty($propertyData) || $propertyData['status'] != 'approved') {
                 $this->response(['status' => 'fail', 'message' => 'Property is not available']);
             }
             $this->load->model('InspectionBooking_model');
