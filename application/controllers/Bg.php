@@ -25,13 +25,16 @@ class Bg extends CI_Controller
         if (empty($pendingPayments)) {
             exit('No pending payments');
         }
+        $remitaBaseURL = $this->config->item('remita_base_url');
         foreach ($pendingPayments as $pp) {
             $rrr = $pp['processor_reference'];
             $apiHash = hash('sha512', $rrr . $apiKey . $this->config->item('remita_merchant_id'));
 
+            $url = $remitaBaseURL.'remita/exapp/api/v1/send/api/echannelsvc/' . $this->config->item('remita_merchant_id') . '/' . $rrr . '/' . $apiHash . '/status.reg';
+            
             $curl = curl_init();
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://remitademo.net/remita/exapp/api/v1/send/api/echannelsvc/' . $this->config->item('remita_merchant_id') . '/' . $rrr . '/' . $apiHash . '/status.reg',
+                CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
