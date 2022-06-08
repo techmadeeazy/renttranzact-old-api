@@ -90,7 +90,7 @@ class Property extends REST_Controller
             $data['no_of_toilets'] = $this->post('no_of_toilets');
             $data['type'] = $this->post('type');
             $data['display'] = $this->post('display');
-
+            $data['purpose'] = $this->post('purpose');
 
 
             $id = $this->Property_model->insertData($data);
@@ -130,7 +130,6 @@ class Property extends REST_Controller
             $data['display'] = strtolower($this->post('display')) == 'public' ? 'public' : 'private';
 
             $this->Property_model->updateById($data, $propertyId);
-
             $this->response(['status' => 'success', 'data' => ['id' => $propertyId]]);
         } else {
             $this->response(['status' => 'fail', 'message' => 'Please login', 'debug' => $userData]);
