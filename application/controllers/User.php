@@ -187,9 +187,13 @@ class User extends REST_Controller
             $bookingExistData = $this->Base_model->getOneRecord('inspection_bookings', ['inspector_id' => $userAuthId, 'property_id' => $propertyId]);
             if (empty($bookingExistData)) {
                 $bookId = $this->InspectionBooking_model->insertData(['inspector_id' => $userAuthId, 'host_id' => $propertyData['user_auth_id'], 'property_id' => $propertyId]);
+                //TODO: send booking notification
+                $this->load->model('Notification_model');
+                $this->Notification_model->sendBookingEmail($propertyData);
                 $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => ['id' => $bookId]]);
             } else {
                 $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $bookingExistData]);
+                
             }
         } else {
             $this->response(['status' => 'fail', 'message' => 'Please login']);

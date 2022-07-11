@@ -62,20 +62,16 @@ class Notification_model extends CI_Model
     $this->sendMail($toEmail, $fullName, "[Confirm Your Email] -  RentTranzact", $mailBody);
   }
 
-  public function initiateNotification($type, $toUserId, $otherData)
+  public function sendBookingEmail($bookingData)
   {
-    $userData = $this->getUserById($toUserId);
-    switch ($type) {
-      case 'money_received':
-        $this->moneyReceivedEmail(
-          $userData['email_address'],
-          $userData['first_name'] . ' ' . $userData['last_name'],
-          $otherData['sender_name'],
-          $otherData['amount']
-        );
-        break;
-    }
+    $hostData = $this->getUserById($bookingData['user_auth_id']);
+    $mailBody = "Your property [" . $bookingData['title'] . "] has just being booked for inspection.
+    <br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
+      . "<br><br>Regards,<br><br> RentTranzact Team.";
+    //$altMailBody = $mail->Body;
+    $this->sendMail($hostData['email_address'], $hostData['username'], "[Inspection Booking] -  RentTranzact", $mailBody);
   }
+
   /**
    * Easy access to user data
    */

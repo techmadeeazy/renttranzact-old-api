@@ -10,7 +10,6 @@ class User_model extends CI_Model
 
         parent::__construct();
         $this->load->database();
-        //$this->load->model('Mambu_model');
     }
 
     public function insertUserData($data)
