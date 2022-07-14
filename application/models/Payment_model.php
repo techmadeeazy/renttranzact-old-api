@@ -48,7 +48,7 @@ class Payment_model extends CI_Model
 
     public function getPendingPayments()
     {
-        $query = $this->db->query("SELECT * FROM $this->table WHERE payment_status = 'pending' ORDER BY id DESC LIMIT 10");
+        $query = $this->db->query("SELECT * FROM $this->table WHERE payment_status = 'pending' ORDER BY id DESC LIMIT 100");
         return $query->result_array();
     }
 
