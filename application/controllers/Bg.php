@@ -72,6 +72,7 @@ class Bg extends CI_Controller
     {
         $this->load->model('InspectionBooking_model');
         $this->load->model('Payment_model');
+        $this->load->model('Property_model');
         $paymentData = $this->Payment_model->getBy($processorReference, 'processor_reference');
         if (!empty($paymentData)) {
             //update
