@@ -9,8 +9,6 @@ class Bg extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        //$this->load->model('Base_model');
-        //$this->load->model('User_model');
     }
 
     public function update_status()
@@ -30,8 +28,8 @@ class Bg extends CI_Controller
             $rrr = $pp['processor_reference'];
             $apiHash = hash('sha512', $rrr . $apiKey . $this->config->item('remita_merchant_id'));
 
-            $url = $remitaBaseURL.'remita/exapp/api/v1/send/api/echannelsvc/' . $this->config->item('remita_merchant_id') . '/' . $rrr . '/' . $apiHash . '/status.reg';
-            
+            $url = $remitaBaseURL . 'remita/exapp/api/v1/send/api/echannelsvc/' . $this->config->item('remita_merchant_id') . '/' . $rrr . '/' . $apiHash . '/status.reg';
+
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $url,
@@ -81,6 +79,10 @@ class Bg extends CI_Controller
             $this->Payment_model->updateById(['payment_status' => 'successful'], $paymentData['id']);
             //update inspection booking id
             $this->InspectionBooking_model->updateById(['status' => 'paid'], $paymentData['inspection_booking_id']);
+            //get propertyId from booking information:
+            $bookingData = $this->InspectionBooking_model->getById($paymentData['inspection_booking_id']);
+            //update property to remove from display
+            $this->Property_model->updateById(['active' => 0], $bookingData['property_id']);
         }
     }
 }
