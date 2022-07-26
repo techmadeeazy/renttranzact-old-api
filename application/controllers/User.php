@@ -532,4 +532,11 @@ class User extends REST_Controller
         $this->Notification_model->testSendEmail($emailAddress);
         $this->response(["status" => "success", "message" => "sent"]);
     }
+
+    public function delete_post()
+    {
+        $userAuthId = $this->post('user_auth_id');
+        $loginToken = $this->post('token');   
+        $this->response(["status" => "success", 'message' => 'Account deletion will be completed within 72 hours']);
+    }
 }
