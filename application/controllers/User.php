@@ -212,7 +212,9 @@ class User extends REST_Controller
             case 'agent':
                 $bookingData = $this->InspectionBooking_model->getAllBy($userAuthId, 'host_id');
                 foreach ($bookingData as $b) {
-
+                    if($b['status'] == 'vetting'){
+                        continue;
+                    }
                     $inspectorData = $this->UserProfile_model->getBy($b['inspector_id'], 'user_auth_id');
                     unset($inspectorData['address'], $inspectorData['created'], $inspectorData['modified'], $inspectorData['status'], $inspectorData['primary_role'], $inspectorData['id'], $inspectorData['lga'], $inspectorData['rc_number']);
                     $b['inspector'] = $inspectorData;
