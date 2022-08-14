@@ -64,3 +64,9 @@ ADD COLUMN `blocked` TINYINT(1) NULL DEFAULT 0 AFTER `referral_code`;
 
 ALTER TABLE `property_listings` 
 CHANGE COLUMN `status` `status` ENUM('pending', 'approved') NULL DEFAULT 'pending' ;
+
+ALTER TABLE `inspection_bookings` 
+CHANGE COLUMN `status` `status` ENUM('vetting', 'pending', 'cancel', 'approve_payment', 'paid', 'complete') NULL DEFAULT 'vetting' ;
+
+ALTER TABLE `user_auths` 
+ADD COLUMN `deleted` INT UNSIGNED NULL AFTER `blocked`;
