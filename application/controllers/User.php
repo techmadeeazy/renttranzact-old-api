@@ -187,13 +187,12 @@ class User extends REST_Controller
             $bookingExistData = $this->Base_model->getOneRecord('inspection_bookings', ['inspector_id' => $userAuthId, 'property_id' => $propertyId]);
             if (empty($bookingExistData)) {
                 $bookId = $this->InspectionBooking_model->insertData(['inspector_id' => $userAuthId, 'host_id' => $propertyData['user_auth_id'], 'property_id' => $propertyId]);
-                //TODO: send booking notification
                 $this->load->model('Notification_model');
-                $this->Notification_model->sendBookingEmail($propertyData);
+                //Pause sending of message
+                //$this->Notification_model->sendBookingEmail($propertyData);
                 $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => ['id' => $bookId]]);
             } else {
                 $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $bookingExistData]);
-                
             }
         } else {
             $this->response(['status' => 'fail', 'message' => 'Please login']);
@@ -212,7 +211,7 @@ class User extends REST_Controller
             case 'agent':
                 $bookingData = $this->InspectionBooking_model->getAllBy($userAuthId, 'host_id');
                 foreach ($bookingData as $b) {
-                    if($b['status'] == 'vetting'){
+                    if ($b['status'] == 'vetting') {
                         continue;
                     }
                     $inspectorData = $this->UserProfile_model->getBy($b['inspector_id'], 'user_auth_id');
@@ -538,7 +537,7 @@ class User extends REST_Controller
     public function delete_post()
     {
         $userAuthId = $this->post('user_auth_id');
-        $loginToken = $this->post('token');   
+        $loginToken = $this->post('token');
         $userData = $this->UserAuth_model->getById($userAuthId);
         if (isset($userData['token']) && $userData['token'] === $loginToken) {
             $this->load->model('UserAuth_model');
@@ -550,13 +549,13 @@ class User extends REST_Controller
     public function undelete_post()
     {
         $userAuthId = $this->post('user_auth_id');
-        $loginToken = $this->post('token'); 
+        $loginToken = $this->post('token');
         $userData = $this->UserAuth_model->getById($userAuthId);
         if (isset($userData['token']) && $userData['token'] === $loginToken) {
             $this->load->model('UserAuth_model');
             //strtotime("now +72 hours");
             $this->UserAuth_model->updateById(['deleted' => null], $userAuthId);
-        }  
+        }
         $this->response(["status" => "success", 'message' => 'Account deletion successfully cancelled']);
     }
 }
