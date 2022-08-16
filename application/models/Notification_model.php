@@ -68,10 +68,11 @@ class Notification_model extends CI_Model
     $hostData = $this->User_model->getUserById($bookingData['user_auth_id']);
     $mailBody = "Your property [" . $bookingData['title'] . "] has just being booked for inspection.
     <br>Please check your app and respond to the request within 72hours.
-    <br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
+    <br>For any enquiries contact  Support Team at customersupport@rentranzact.com"
       . "<br><br>Regards,<br><br> RentTranzact Team.";
     //$altMailBody = $mail->Body;
-    $this->sendMail($hostData['email_address'], $hostData['username'], "[Inspection Booking] -  RentTranzact", $mailBody);
+    //$hostData['email_address']
+    $this->sendMail('customersupport@rentranzact.com', $hostData['username'], "[Inspection Booking] -  RentTranzact", $mailBody);
   }
 
   /**
