@@ -535,11 +535,11 @@ class User extends REST_Controller
 
     public function delete_post()
     {
+        $this->load->model('UserAuth_model');
         $userAuthId = $this->post('user_auth_id');
         $loginToken = $this->post('token');
         $userData = $this->UserAuth_model->getById($userAuthId);
         if (isset($userData['token']) && $userData['token'] === $loginToken) {
-            $this->load->model('UserAuth_model');
             //strtotime("now +72 hours");
             $this->UserAuth_model->updateById(['deleted' => strtotime("now +72 hours")], $userAuthId);
         }
@@ -547,11 +547,11 @@ class User extends REST_Controller
     }
     public function undelete_post()
     {
+        $this->load->model('UserAuth_model');
         $userAuthId = $this->post('user_auth_id');
         $loginToken = $this->post('token');
         $userData = $this->UserAuth_model->getById($userAuthId);
         if (isset($userData['token']) && $userData['token'] === $loginToken) {
-            $this->load->model('UserAuth_model');
             //strtotime("now +72 hours");
             $this->UserAuth_model->updateById(['deleted' => null], $userAuthId);
         }
