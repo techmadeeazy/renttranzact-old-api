@@ -69,21 +69,21 @@ class Notification_model extends CI_Model
     $inspectorData = $this->UserAuth_model->getById($bookingData['inspector_id']);
     //Send acknowledgement email to user
     $inspectorMailBody = "Dear {$inspectorData['username']},
-    <br>We've received your booking inspection request on the property (" . $propertyData['title'] . "). A member of our team will reach out to you shortly to schedule the inspection of the property.
-    <br>
+    <br><br>We've received your booking inspection request on the property (" . $propertyData['title'] . "). A member of our team will reach out to you shortly to schedule the inspection of the property.
+    <br><br>
     Please note that you may be required to provide additional information or documents to enable us to verify your identity and protect our landlords and property managers from fraudulent potential tenants.
-    <br>
+    <br><br>
     You can also reach out to our support staff to expedite this action through: customersupport@rentranzact.com
     <br><br>Regards,<br><br> RenTranzact Team.<br>www.rentranzact.com";
 
     $this->sendMail($inspectorData['email_address'], $inspectorData['username'], "[Inspection Booking] -  {$propertyData['title']}", $inspectorMailBody);
     //Send mail to admin
     $adminMailBody = "Dear Admin,
-<br>A new inspection booking is awaiting approval on a property. Please review the inspection request and schedule a call with the property owner/manager.<br>
+<br><br>A new inspection booking is awaiting approval on a property. Please review the inspection request and schedule a call with the property owner/manager.<br>
     <br>Username: {$inspectorData['username']}
     <br>Property Name: {$propertyData['title']}
     <br>Property Manager: {$hostData['username']}
-    <br>For any enquiries contact  Support Team at customersupport@rentranzact.com
+    <br><br>For any enquiries contact  Support Team at customersupport@rentranzact.com
     <br><br>Regards,<br><br> RenTranzact Team.";
     //$altMailBody = $mail->Body;
     //$hostData['email_address']
