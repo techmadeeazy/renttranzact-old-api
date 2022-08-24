@@ -22,44 +22,44 @@ class Notification_model extends CI_Model
   public function testSendEmail($toEmail)
   {
     $fullName = 'Joe Doe';
-    $subject = "[Email Test] -  RentTranzact";
+    $subject = "[Email Test] -  RenTranzact";
     $body = "Dear $fullName, <br> "
       . "<br>Use the code to verify your email address : " . date('Y:m:d H:i:s')
-      . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
-      . "<br><br>Regards,<br><br> RentTranzact Team.";
+      . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@RenTranzact.com"
+      . "<br><br>Regards,<br><br> RenTranzact Team.";
     $this->sendMailTest($toEmail, $fullName, $subject, $body);
   }
 
   public function sendVerifyEmail($toEmail, $fullName, $code)
   {
-    $subject = "[Verification Code] -  RentTranzact";
+    $subject = "[Verification Code] -  RenTranzact";
     $body = "Dear $fullName, <br> "
       . "<br>Use the code to verify your email address : $code"
-      . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
-      . "<br><br>Regards,<br><br> RentTranzact Team.";
+      . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@RenTranzact.com"
+      . "<br><br>Regards,<br><br> RenTranzact Team.";
     $this->sendMail($toEmail, $fullName, $subject, $body);
   }
 
   public function sendPasswordResetEmail($toEmail, $fullName, $code)
   {
-    $subject = "[Password Reset] -  RentTranzact";
+    $subject = "[Password Reset] -  RenTranzact";
     $body = "Dear $fullName, <br> Your  registered  e-mail address
-        on RentTranzact requested for your login details."
+        on RenTranzact requested for your login details."
       . "<br>Use the code to reset your password : $code"
-      . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
-      . "<br><br>Regards,<br><br> RentTranzact Team.";
+      . "<br>Expires in 15 minutes.<br><br>For any enquiries contact  Support Team at customersupport@RenTranzact.com"
+      . "<br><br>Regards,<br><br> RenTranzact Team.";
     $this->sendMail($toEmail, $fullName, $subject, $body);
   }
 
   public function sendRegistrationEmail($toEmail, $fullName, $reference)
   {
-    $mailBody = "Dear $fullName, <br> Thank you for registering on RentTranzact"
+    $mailBody = "Dear $fullName, <br> Thank you for registering on RenTranzact"
       . "<br> Click here to confirm your email address.<br> Here is the link: $reference"
-      . "<br>For any enquiries contact  Support Team at customersupport@renttranzact.com"
-      . "<br><br>Regards,<br><br> RentTranzact Team.";
+      . "<br>For any enquiries contact  Support Team at customersupport@RenTranzact.com"
+      . "<br><br>Regards,<br><br> RenTranzact Team.";
     //$altMailBody = $mail->Body;
 
-    $this->sendMail($toEmail, $fullName, "[Confirm Your Email] -  RentTranzact", $mailBody);
+    $this->sendMail($toEmail, $fullName, "[Confirm Your Email] -  RenTranzact", $mailBody);
   }
 
   public function sendBookingEmail($bookingData, $propertyData)
@@ -74,7 +74,7 @@ class Notification_model extends CI_Model
     Please note that you may be required to provide additional information or documents to enable us to verify your identity and protect our landlords and property managers from fraudulent potential tenants.
     <br>
     You can also reach out to our support staff to expedite this action through: customersupport@rentranzact.com
-    <br><br>Regards,<br><br> RentTranzact Team.<br>www.rentranzact.com";
+    <br><br>Regards,<br><br> RenTranzact Team.<br>www.rentranzact.com";
 
     $this->sendMail($inspectorData['email_address'], $inspectorData['username'], "[Inspection Booking] -  {$propertyData['title']}", $inspectorMailBody);
     //Send mail to admin
@@ -84,7 +84,7 @@ class Notification_model extends CI_Model
     <br>Property Name: {$propertyData['title']}
     <br>Property Manager: {$hostData['username']}
     <br>For any enquiries contact  Support Team at customersupport@rentranzact.com
-    <br><br>Regards,<br><br> RentTranzact Team.";
+    <br><br>Regards,<br><br> RenTranzact Team.";
     //$altMailBody = $mail->Body;
     //$hostData['email_address']
     $this->sendMail('customersupport@rentranzact.com', $hostData['username'], "[Inspection Booking] -  {$propertyData['title']}", $adminMailBody);
@@ -112,7 +112,7 @@ class Notification_model extends CI_Model
     $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
     $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->setFrom('noreply@rentranzact.com', 'RentTranzact');
+    $mail->setFrom('noreply@rentranzact.com', 'RenTranzact');
     $mail->addAddress($toEmail, $toName);
     $mail->Subject = $subject;
     $mail->Body = $body;
@@ -137,7 +137,7 @@ class Notification_model extends CI_Model
     $mail->Port = 465;                                    // TCP port to connect to
     //$mail->addBCC('');
     $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->setFrom('noreply@rentranzact.com', 'RentTranzact');
+    $mail->setFrom('noreply@rentranzact.com', 'RenTranzact');
 
     $mail->addAddress($toEmail, $toName);
     $mail->Subject = $subject;
