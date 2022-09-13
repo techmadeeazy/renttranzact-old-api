@@ -41,7 +41,7 @@ class User extends REST_Controller
             }
             unset($userData['pwd']);
             $userData['token'] = md5(time());
-            $userData['token_expire'] = time() + (15 * 60);
+            $userData['token_expire'] = time() + 86400;
             $this->UserAuth_model->updateById(['token' => $userData['token'], 'token_expire' => $userData['token_expire']], $userData['id']);
             //get the profile
             $this->load->model('UserProfile_model');
@@ -71,7 +71,7 @@ class User extends REST_Controller
     {
         $this->load->model('UserAuth_model');
         $token = md5(time());
-        $tokenExpire =  time() + (15 * 60);
+        $tokenExpire =  time() + 86400;//add 24 hours - 24 * 60 * 60 @TODO: Add this to config
         $this->UserAuth_model->updateById(['token' => $token, 'token_expire' => $tokenExpire], $userAuthId);
         return ['token' => $token, 'token_expire' => $tokenExpire];
     }
