@@ -71,7 +71,7 @@ class User extends REST_Controller
     {
         $this->load->model('UserAuth_model');
         $token = md5(time());
-        $tokenExpire =  time() + 86400;//add 24 hours - 24 * 60 * 60 @TODO: Add this to config
+        $tokenExpire =  time() + 86400; //add 24 hours - 24 * 60 * 60 @TODO: Add this to config
         $this->UserAuth_model->updateById(['token' => $token, 'token_expire' => $tokenExpire], $userAuthId);
         return ['token' => $token, 'token_expire' => $tokenExpire];
     }
@@ -189,7 +189,7 @@ class User extends REST_Controller
                 $bookId = $this->InspectionBooking_model->insertData(['inspector_id' => $userAuthId, 'host_id' => $propertyData['user_auth_id'], 'property_id' => $propertyId]);
                 $this->load->model('Notification_model');
                 $this->Notification_model->sendBookingEmail(['id' => $bookId, 'inspector_id' => $userAuthId, 'host_id' => $propertyData['user_auth_id'], 'property_id' => $propertyId], $propertyData);
-                
+
                 $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => ['id' => $bookId]]);
             } else {
                 $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $bookingExistData]);
@@ -557,5 +557,21 @@ class User extends REST_Controller
             $this->UserAuth_model->updateById(['deleted' => null], $userAuthId);
         }
         $this->response(["status" => "success", 'message' => 'Account deletion successfully cancelled']);
+    }
+
+
+    public function my_referral_get($userAuthId)
+    {
+        $this->load->model('Base_model');
+        $this->load->model('UserAuth_model');
+        $userData = $this->UserAuth_model->getById($userAuthId);
+
+        $result = $this->Base_model->get_many('user_auths', ['referral_code' => $userData['username']]);
+        $referralData = [];
+        foreach ($result as $b) {
+            $referralData[] = ['username' => $b['username']];
+        }
+
+        $this->response(["status" => "success", "data" => $referralData]);//, 'debug' => $result
     }
 }
