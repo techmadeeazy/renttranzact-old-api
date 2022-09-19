@@ -565,6 +565,9 @@ class User extends REST_Controller
         $this->load->model('Base_model');
         $this->load->model('UserAuth_model');
         $userData = $this->UserAuth_model->getById($userAuthId);
+        if(empty($userData)){
+            $this->response(['status' => 'fail', 'message' => 'User not found']);
+        }
 
         $result = $this->Base_model->get_many('user_auths', ['referral_code' => $userData['username']]);
         $referralData = [];
