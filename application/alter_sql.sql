@@ -70,3 +70,23 @@ CHANGE COLUMN `status` `status` ENUM('vetting', 'pending', 'cancel', 'approve_pa
 
 ALTER TABLE `user_auths` 
 ADD COLUMN `deleted` INT UNSIGNED NULL AFTER `blocked`;
+
+CREATE TABLE `user_wallets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_auth_id` int(11) NOT NULL,
+  `available_amount` double NOT NULL,
+  `ledger_amount` double NOT NULL,
+  `created` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `user_wallet_transactions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_auth_id` int(11) NOT NULL,
+  `amount` double NOT NULL,
+  `note` varchar(100) DEFAULT NULL,
+  `reference` varchar(50) NOT NULL,
+  `created` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
