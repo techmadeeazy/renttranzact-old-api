@@ -239,7 +239,7 @@ class Util extends REST_Controller
 
     public function config_get()
     {
-        $config = ['RT_email' => 'customersupport@rentranzact.com', 'RT_phone' => '+2349062547240', 'RT_twitter' => 'https://twitter.com/Rentranzact', 'RT_facebook' => 'https://www.facebook.com/Rentranzact-111072748262817/', 'RT_instagram' => 'https://www.instagram.com/rentranzact/?hl=en', 'RT_whatsapp' => '+2349169582742'];
+        $config = ['RT_email' => 'customersupport@rentranzact.com', 'RT_phone' => '+23418880440', 'RT_twitter' => 'https://twitter.com/Rentranzact', 'RT_facebook' => 'https://www.facebook.com/Rentranzact-111072748262817/', 'RT_instagram' => 'https://www.instagram.com/rentranzact/?hl=en', 'RT_whatsapp' => '+2349169582742'];
         $this->response(['status' => 'success', 'data' => $config]);
     }
 }
