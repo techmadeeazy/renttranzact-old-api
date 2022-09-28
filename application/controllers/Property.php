@@ -91,6 +91,9 @@ class Property extends REST_Controller
             $data['type'] = $this->post('type');
             $data['display'] = $this->post('display');
             $data['purpose'] = $this->post('purpose');
+            $data['management_fee_percent'] = $this->post('management_fee_percent');
+            $data['management_fee_percent'] = intval($data['management_fee_percent']) < 5 ? 10 : $data['management_fee_percent'];
+            
 
 
             $id = $this->Property_model->insertData($data);
@@ -128,6 +131,8 @@ class Property extends REST_Controller
             $data['no_of_toilets'] = $this->post('no_of_toilets');
             $data['type'] = $this->post('type');
             $data['display'] = strtolower($this->post('display')) == 'public' ? 'public' : 'private';
+            $data['management_fee_percent'] = $this->post('management_fee_percent');
+            $data['management_fee_percent'] = intval($data['management_fee_percent']) < 5 ? 10 : $data['management_fee_percent'];
 
             $this->Property_model->updateById($data, $propertyId);
             $this->response(['status' => 'success', 'data' => ['id' => $propertyId]]);

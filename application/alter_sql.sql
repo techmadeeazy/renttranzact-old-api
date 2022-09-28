@@ -90,3 +90,5 @@ CREATE TABLE `user_wallet_transactions` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
+ALTER TABLE `property_listings` 
+ADD COLUMN `management_fee_percent` TINYINT(1) NULL DEFAULT 10 AFTER `display`;
