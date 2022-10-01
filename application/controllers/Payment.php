@@ -82,7 +82,9 @@ class Payment extends REST_Controller
         if (empty($bookingData)) {
             $this->response(['status' => 'fail', 'message' => 'Booking is not available']);
         }
-
+        //get property data
+        //$this->load->model('Property_model');
+        //$propertyData = $this->Property_model->getById($bookingData['property_id']);
         $this->response(['status' => 'success', 'data' => ['amount' => floatval($bookingData['agreed_amount']), 'agent_fee' => ($bookingData['agreed_amount'] * 0.1), 'legal_fee' => ($bookingData['agreed_amount'] * 0.1), 'caution_fee' => floatval($bookingData['caution_fee'])]]);
     }
 
@@ -113,7 +115,7 @@ class Payment extends REST_Controller
             //start remita process
             $this->load->helper('string');
             $reference = random_string('md5');
-
+            //TODO: Calculation of fee should be done on payment approval
             $amountData['legal'] = $bookingData['agreed_amount'] * 0.1;
             $amountData['agency'] = $bookingData['agreed_amount'] * 0.1;
             $amountData['caution'] =  floatval($bookingData['caution_fee']);
