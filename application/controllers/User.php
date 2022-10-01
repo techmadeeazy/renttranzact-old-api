@@ -263,16 +263,22 @@ class User extends REST_Controller
             }
 
             if ($userAuthId == $bookingData['host_id']) {
+
+                //get property data so as to get management percentage fee
+                $this->load->model('Property_model');
+                $propertyData = $this->Property_model->getById($bookingData['property_id']);
+                $managementFeePercent = $propertyData['management_fee_percent'] > 0 ? $propertyData['management_fee_percent'] / 100 : 0.1;
                 //approve with caution fee and agreed amount
-                $updateData = ['caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment', 'payment_deadline' => $this->post('payment_deadline')];
+                $updateData = ['management_fee' => ($bookingData['agreed_amount'] * $managementFeePercent), 'legal_fee' => ($bookingData['agreed_amount'] * 0.1), 'agent_fee' => ($bookingData['agreed_amount'] * 0.1), 'caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment', 'payment_deadline' => $this->post('payment_deadline')];
 
                 $updateData['start_date'] = $this->post('start_date') && strtotime($this->post('start_date')) ? date('Y-m-d', strtotime($this->post('start_date'))) : $bookingData['start_date'];
                 $updateData['end_date'] = $this->post('end_date') && strtotime($this->post('end_date')) ? date('Y-m-d', strtotime($this->post('end_date'))) : $bookingData['end_date'];
+                //print_r($updateData);
+                //exit;
 
                 $this->InspectionBooking_model->updateById($updateData, $bookingData['id']);
+                $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $this->post()]);
             }
-
-            $this->response(['status' => 'success', 'message' => 'Booking submitted', 'data' => $this->post()]);
         } else {
             $this->response(['status' => 'fail', 'message' => 'Please login']);
         }
@@ -565,7 +571,7 @@ class User extends REST_Controller
         $this->load->model('Base_model');
         $this->load->model('UserAuth_model');
         $userData = $this->UserAuth_model->getById($userAuthId);
-        if(empty($userData)){
+        if (empty($userData)) {
             $this->response(['status' => 'fail', 'message' => 'User not found']);
         }
 
@@ -575,6 +581,6 @@ class User extends REST_Controller
             $referralData[] = ['username' => $b['username']];
         }
 
-        $this->response(["status" => "success", "data" => $referralData]);//, 'debug' => $result
+        $this->response(["status" => "success", "data" => $referralData]); //, 'debug' => $result
     }
 }

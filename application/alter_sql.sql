@@ -97,3 +97,7 @@ ADD COLUMN `management_fee_percent` TINYINT(1) NULL DEFAULT 10 AFTER `display`;
 ALTER TABLE `inspection_bookings` 
 ADD COLUMN `legal_fee` DOUBLE NULL DEFAULT 0 AFTER `agreed_amount`,
 ADD COLUMN `management_fee` DOUBLE NULL DEFAULT 0 AFTER `legal_fee`;
+
+
+ALTER TABLE `inspection_bookings` 
+ADD COLUMN `agent_fee` DOUBLE NULL DEFAULT 0 AFTER `management_fee`;

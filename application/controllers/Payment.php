@@ -82,10 +82,8 @@ class Payment extends REST_Controller
         if (empty($bookingData)) {
             $this->response(['status' => 'fail', 'message' => 'Booking is not available']);
         }
-        //get property data
-        //$this->load->model('Property_model');
-        //$propertyData = $this->Property_model->getById($bookingData['property_id']);
-        $this->response(['status' => 'success', 'data' => ['amount' => floatval($bookingData['agreed_amount']), 'agent_fee' => ($bookingData['agreed_amount'] * 0.1), 'legal_fee' => ($bookingData['agreed_amount'] * 0.1), 'caution_fee' => floatval($bookingData['caution_fee'])]]);
+
+        $this->response(['status' => 'success', 'data' => ['amount' => floatval($bookingData['agreed_amount']), 'agent_fee' => floatval($bookingData['agent_fee']), 'legal_fee' => floatval($bookingData['legal_fee']), 'caution_fee' => floatval($bookingData['caution_fee'])]]);
     }
 
     public function start_post()
