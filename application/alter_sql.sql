@@ -101,3 +101,6 @@ ADD COLUMN `management_fee` DOUBLE NULL DEFAULT 0 AFTER `legal_fee`;
 
 ALTER TABLE `inspection_bookings` 
 ADD COLUMN `agent_fee` DOUBLE NULL DEFAULT 0 AFTER `management_fee`;
+
+ALTER TABLE `inspection_bookings` 
+ADD COLUMN `referral_processed` TINYINT(1) NULL DEFAULT 0 AFTER `modified`;
