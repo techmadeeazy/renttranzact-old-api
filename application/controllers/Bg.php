@@ -18,6 +18,7 @@ class Bg extends CI_Controller
         $this->load->model('Payment_model');
 
         //get pending payments
+        //$cutOffDate can be set
         $pendingPayments = $this->Payment_model->getPendingPayments();
 
         if (empty($pendingPayments)) {
@@ -84,6 +85,39 @@ class Bg extends CI_Controller
             $bookingData = $this->InspectionBooking_model->getById($paymentData['inspection_booking_id']);
             //update property to remove from display
             $this->Property_model->updateById(['active' => 0], $bookingData['property_id']);
+        }
+    }
+
+    public function process_split_fee()
+    {
+        $this->load->model('InspectionBooking_model');
+        $this->load->model('UserAuth_model');
+
+        $pendingSplitFee = $this->InspectionBooking_model->getPendingSplitFee();
+        //print_r($pendingSplitFee);
+        foreach ($pendingSplitFee as $p) {
+            print_r($p);
+            echo '<hr>';
+            //Do the calculation
+            $rtAgencyCommission = 0.1 * $p['agreed_amount']; //10% of rent
+            $rtLegalCommission = 0.1 * $p['agent_fee'];
+            $rtManagementCommission = 0.1 * $p['management_fee'];
+            
+            //get host referrer
+            $hostData = $this->UserAuth_model->getById($p['host_id']);
+            if (!empty($hostData['referral_code'])) {
+                //get host referrer data
+                $hostReferrerData =  $this->UserAuth_model->getByUsername($hostData['referral_code']);
+                $hostReferrerCommission = (0.1 * $rtAgencyCommission) + (0.1 * $rtManagementCommission) ;
+                //update wallet
+                $this->load->model('UserWallet_model');
+                //$this->UserWallet_model->saveData(['']);
+            }
+            
+            //TODO: settle rentranzact
+            //Settle referrer
+            //Update inspection booking
+
         }
     }
 }
