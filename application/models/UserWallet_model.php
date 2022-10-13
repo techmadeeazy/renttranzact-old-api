@@ -16,7 +16,7 @@ class UserWallet_model extends CI_Model
     public function saveData($data)
     {
         $walletData = $this->getBy($data['user_auth_id'], 'user_auth_id');
-        if (empty($userData)) {
+        if (empty($walletData)) {
             $data['created'] = date('Y-m-d H:i:s');
             $data['modified'] = date('Y-m-d H:i:s');
             $this->db->insert($this->table, $data);

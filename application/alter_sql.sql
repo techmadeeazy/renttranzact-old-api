@@ -103,3 +103,6 @@ ADD COLUMN `split_processed` TINYINT(1) NULL DEFAULT 0 COMMENT 'Has the split fe
 
 ALTER TABLE `user_wallets` 
 ADD COLUMN `modified` DATETIME NULL DEFAULT NULL AFTER `created`;
+
+ALTER TABLE `user_wallet_transactions` 
+CHANGE COLUMN `reference` `reference` VARCHAR(50) NULL ;
