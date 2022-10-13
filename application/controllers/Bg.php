@@ -99,12 +99,13 @@ class Bg extends CI_Controller
         }
         foreach ($pendingSplitFee as $p) {
             print_r($p);
-
             //Do the calculation
-            $rtAgencyCommission = 0.1 * $p['agreed_amount']; //10% of rent
-            $rtLegalCommission = 0.1 * $p['agent_fee'];
+            $rtAgencyCommission = 0.1 * $p['agent_fee']; //10% of rent
+            $rtLegalCommission = 0.1 * $p['legal_fee'];
             $rtManagementCommission = 0.1 * $p['management_fee'];
-
+            $rtTotalCommission = $rtAgencyCommission + $rtLegalCommission + $rtManagementCommission + $p['caution_fee'];
+            $this->load->model('AdminEarning_model');
+            $this->AdminEarning_model->saveData(['property_id' => $p['property_id'], 'agent_fee' => $rtAgencyCommission, 'legal_fee' =>  $rtLegalCommission, 'management_fee' => $rtManagementCommission, 'caution_fee' => $p['caution_fee'], 'total' => $rtTotalCommission]);
             //get host referrer
             $hostData = $this->UserAuth_model->getById($p['host_id']);
             if (!empty($hostData['referral_code'])) {

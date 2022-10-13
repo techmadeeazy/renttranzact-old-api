@@ -106,3 +106,15 @@ ADD COLUMN `modified` DATETIME NULL DEFAULT NULL AFTER `created`;
 
 ALTER TABLE `user_wallet_transactions` 
 CHANGE COLUMN `reference` `reference` VARCHAR(50) NULL ;
+
+CREATE TABLE `admin_earnings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `property_id` int(11) DEFAULT '0',
+  `agent_fee` double DEFAULT '0',
+  `legal_fee` double DEFAULT '0',
+  `management_fee` double DEFAULT '0',
+  `caution_fee` double DEFAULT '0',
+  `total` double DEFAULT '0',
+  `created` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
