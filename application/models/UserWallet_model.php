@@ -38,7 +38,7 @@ class UserWallet_model extends CI_Model
         $data['modified'] = date("Y-m-d H:i:s");
         //$this->db->where('id', $id);
         //$this->db->update($this->table, $data);
-        $sql = "UPDATE  $this->table SET user_auth_id = {$data['user_auth_id']},  available_amount = available_amount + {$data['available_amount']}, ledger_amount = ledger_amount + {$data['ledger_amount']}, modified = {$data['modified']}  WHERE id = '$id'";
+        $sql = "UPDATE  $this->table SET user_auth_id = {$data['user_auth_id']},  available_amount = available_amount + {$data['available_amount']}, ledger_amount = ledger_amount + {$data['ledger_amount']}, modified = '{$data['modified']}'  WHERE id = $id";
         $query = $this->db->query($sql);
     }
 
