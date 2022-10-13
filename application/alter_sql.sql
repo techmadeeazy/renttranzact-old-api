@@ -100,3 +100,6 @@ ADD COLUMN `management_fee` DOUBLE NULL DEFAULT 0 AFTER `legal_fee`;
 
 ALTER TABLE `inspection_bookings` 
 ADD COLUMN `split_processed` TINYINT(1) NULL DEFAULT 0 COMMENT 'Has the split fee been processed? 1 = Yes, 0 = No' AFTER `modified`;
+
+ALTER TABLE `user_wallets` 
+ADD COLUMN `modified` DATETIME NULL DEFAULT NULL AFTER `created`;

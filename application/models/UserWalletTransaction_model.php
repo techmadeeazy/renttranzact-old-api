@@ -16,7 +16,6 @@ class UserWalletTransaction_model extends CI_Model
     public function saveData($data)
     {
             $data['created'] = date('Y-m-d H:i:s');
-            $data['modified'] = date('Y-m-d H:i:s');
             $this->db->insert($this->table, $data);
             return $this->db->insert_id();
        
