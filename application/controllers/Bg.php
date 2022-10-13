@@ -94,30 +94,35 @@ class Bg extends CI_Controller
         $this->load->model('UserAuth_model');
 
         $pendingSplitFee = $this->InspectionBooking_model->getPendingSplitFee();
-        //print_r($pendingSplitFee);
+        if (empty($pendingSplitFee)) {
+            exit('Nothing to process');
+        }
         foreach ($pendingSplitFee as $p) {
             print_r($p);
-            echo '<hr>';
+
             //Do the calculation
             $rtAgencyCommission = 0.1 * $p['agreed_amount']; //10% of rent
             $rtLegalCommission = 0.1 * $p['agent_fee'];
             $rtManagementCommission = 0.1 * $p['management_fee'];
-            
+
             //get host referrer
             $hostData = $this->UserAuth_model->getById($p['host_id']);
             if (!empty($hostData['referral_code'])) {
+                echo '<br>A referral found:';
+                print_r($hostData);
+                $this->load->model('UserWallet_model');
+                $this->load->model('UserWalletTransaction_model');
                 //get host referrer data
                 $hostReferrerData =  $this->UserAuth_model->getByUsername($hostData['referral_code']);
-                $hostReferrerCommission = (0.1 * $rtAgencyCommission) + (0.1 * $rtManagementCommission) ;
+                $hostReferrerCommission = (0.1 * $rtAgencyCommission) + (0.1 * $rtManagementCommission);
                 //update wallet
                 $this->load->model('UserWallet_model');
-                //$this->UserWallet_model->saveData(['']);
+                $this->UserWallet_model->saveData(['user_auth_id' => $hostReferrerData['id'], 'available_amount' => $hostReferrerCommission, 'ledger_amount' => $hostReferrerCommission]);
+                $this->UserWalletTransaction_model->saveData(['user_auth_id' => $hostReferrerData['id'], 'amount' => $hostReferrerCommission, 'note' => 'Commission from property#' . $p['property_id']]);
             }
-            
-            //TODO: settle rentranzact
-            //Settle referrer
+            echo '<hr>';
             //Update inspection booking
-
+            $this->InspectionBooking_model->updateById(['split_processed' => 1], $p['id']);
         }
     }
 }

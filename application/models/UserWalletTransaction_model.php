@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Payment_model extends CI_Model
 {
-    private $table = 'user_wallets';
+    private $table = 'user_wallet_transactions';
 
     public function __construct()
     {
@@ -15,16 +15,11 @@ class Payment_model extends CI_Model
 
     public function saveData($data)
     {
-        $userData = $this->getBy($data['user_auth_id'], 'user_auth_id');
-        if (empty($userData)) {
             $data['created'] = date('Y-m-d H:i:s');
             $data['modified'] = date('Y-m-d H:i:s');
             $this->db->insert($this->table, $data);
             return $this->db->insert_id();
-        } else {
-            $this->updateById($data, $data['id']);
-            return $data['id'];
-        }
+       
     }
     public function getById($id)
     {
@@ -36,10 +31,8 @@ class Payment_model extends CI_Model
     public function updateById($data, $id)
     {
         $data['modified'] = date("Y-m-d H:i:s");
-        //$this->db->where('id', $id);
-        //$this->db->update($this->table, $data);
-        $sql = "UPDATE  $this->table SET user_auth_id = {$data['user_auth_id']},  available_amount = available_amount + {$data['available_amount']}, ledger_amount = ledger_amount + {$data['ledger_amount']}, modified = {$data['modified']}  WHERE id = '$id'";
-        $query = $this->db->query($sql);
+        $this->db->where('id', $id);
+        $this->db->update($this->table, $data);
     }
 
     public function getBy($byValue, $by = 'id')
