@@ -15,15 +15,15 @@ class UserWallet_model extends CI_Model
 
     public function saveData($data)
     {
-        $userData = $this->getBy($data['user_auth_id'], 'user_auth_id');
+        $walletData = $this->getBy($data['user_auth_id'], 'user_auth_id');
         if (empty($userData)) {
             $data['created'] = date('Y-m-d H:i:s');
             $data['modified'] = date('Y-m-d H:i:s');
             $this->db->insert($this->table, $data);
             return $this->db->insert_id();
         } else {
-            $this->updateById($data, $data['id']);
-            return $data['id'];
+            $this->updateById($data, $walletData['id']);
+            return $walletData['id'];
         }
     }
     public function getById($id)
