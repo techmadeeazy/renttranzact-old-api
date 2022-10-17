@@ -2,9 +2,9 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Payment_model extends CI_Model
+class UserWalletTransaction_model extends CI_Model
 {
-    private $table = 'payment_transactions';
+    private $table = 'user_wallet_transactions';
 
     public function __construct()
     {
@@ -13,12 +13,12 @@ class Payment_model extends CI_Model
         $this->load->database();
     }
 
-    public function insertData($data)
+    public function saveData($data)
     {
-        $data['created'] = date('Y-m-d H:i:s');
-        $data['modified'] = date('Y-m-d H:i:s');
-        $this->db->insert($this->table, $data);
-        return $this->db->insert_id();
+            $data['created'] = date('Y-m-d H:i:s');
+            $this->db->insert($this->table, $data);
+            return $this->db->insert_id();
+       
     }
     public function getById($id)
     {
@@ -34,21 +34,21 @@ class Payment_model extends CI_Model
         $this->db->update($this->table, $data);
     }
 
-    public function getBy($byValue,$by='id')
+    public function getBy($byValue, $by = 'id')
     {
         $query = $this->db->query("SELECT * FROM $this->table WHERE $by = '$byValue'");
         return $query->row_array();
     }
-    
+
     public function getAll()
     {
         $query = $this->db->query("SELECT * FROM $this->table WHERE 1");
         return $query->result_array();
     }
-    
-    public function getPendingPayments($cutOffDate='')
+
+    public function getPendingPayments($cutOffDate = '')
     {
-        if (empty($cutOffDate)){
+        if (empty($cutOffDate)) {
             $cutOffDate = date("Y-m-d", strtotime('-7 days'));
         }
         $query = $this->db->query("SELECT * FROM $this->table WHERE payment_status = 'pending' AND created > $cutOffDate ORDER BY id DESC LIMIT 100");

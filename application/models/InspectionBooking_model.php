@@ -42,7 +42,12 @@ class InspectionBooking_model extends CI_Model
         return $query->result_array();
     }
     
-    
+    public function getPendingSplitFee()
+    {
+        $query = $this->db->query("SELECT * FROM $this->table WHERE split_processed = 0 AND status = 'paid' ORDER BY id DESC LIMIT 100");
+        return $query->result_array();
+    }
+
     public function rawLog($title, $body)
     {
 

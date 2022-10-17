@@ -2,9 +2,9 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Payment_model extends CI_Model
+class UserWallet_model extends CI_Model
 {
-    private $table = 'payment_transactions';
+    private $table = 'user_wallets';
 
     public function __construct()
     {
@@ -13,12 +13,18 @@ class Payment_model extends CI_Model
         $this->load->database();
     }
 
-    public function insertData($data)
+    public function saveData($data)
     {
-        $data['created'] = date('Y-m-d H:i:s');
-        $data['modified'] = date('Y-m-d H:i:s');
-        $this->db->insert($this->table, $data);
-        return $this->db->insert_id();
+        $walletData = $this->getBy($data['user_auth_id'], 'user_auth_id');
+        if (empty($walletData)) {
+            $data['created'] = date('Y-m-d H:i:s');
+            $data['modified'] = date('Y-m-d H:i:s');
+            $this->db->insert($this->table, $data);
+            return $this->db->insert_id();
+        } else {
+            $this->updateById($data, $walletData['id']);
+            return $walletData['id'];
+        }
     }
     public function getById($id)
     {
@@ -30,25 +36,27 @@ class Payment_model extends CI_Model
     public function updateById($data, $id)
     {
         $data['modified'] = date("Y-m-d H:i:s");
-        $this->db->where('id', $id);
-        $this->db->update($this->table, $data);
+        //$this->db->where('id', $id);
+        //$this->db->update($this->table, $data);
+        $sql = "UPDATE  $this->table SET user_auth_id = {$data['user_auth_id']},  available_amount = available_amount + {$data['available_amount']}, ledger_amount = ledger_amount + {$data['ledger_amount']}, modified = '{$data['modified']}'  WHERE id = $id";
+        $query = $this->db->query($sql);
     }
 
-    public function getBy($byValue,$by='id')
+    public function getBy($byValue, $by = 'id')
     {
         $query = $this->db->query("SELECT * FROM $this->table WHERE $by = '$byValue'");
         return $query->row_array();
     }
-    
+
     public function getAll()
     {
         $query = $this->db->query("SELECT * FROM $this->table WHERE 1");
         return $query->result_array();
     }
-    
-    public function getPendingPayments($cutOffDate='')
+
+    public function getPendingPayments($cutOffDate = '')
     {
-        if (empty($cutOffDate)){
+        if (empty($cutOffDate)) {
             $cutOffDate = date("Y-m-d", strtotime('-7 days'));
         }
         $query = $this->db->query("SELECT * FROM $this->table WHERE payment_status = 'pending' AND created > $cutOffDate ORDER BY id DESC LIMIT 100");
