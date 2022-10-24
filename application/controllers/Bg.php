@@ -108,6 +108,10 @@ class Bg extends CI_Controller
             $this->AdminEarning_model->saveData(['property_id' => $p['property_id'], 'agent_fee' => $rtAgencyCommission, 'legal_fee' =>  $rtLegalCommission, 'management_fee' => $rtManagementCommission, 'caution_fee' => $p['caution_fee'], 'total' => $rtTotalCommission]);
             //get host referrer
             $hostData = $this->UserAuth_model->getById($p['host_id']);
+            //split payment to property manager
+            $this->UserWallet_model->saveData(['user_auth_id' => $hostData['id'], 'available_amount' => $p['agreed_amount'], 'ledger_amount' => $p['agreed_amount']]);
+                $this->UserWalletTransaction_model->saveData(['user_auth_id' => $hostData['id'], 'amount' => $p['agreed_amount'], 'note' => 'Rent from property#' . $p['property_id']]);
+
             if (!empty($hostData['referral_code'])) {
                 echo '<br>A referral found:';
                 print_r($hostData);
