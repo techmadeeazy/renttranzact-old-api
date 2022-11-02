@@ -110,19 +110,19 @@ class Bg extends CI_Controller
             //get host referrer
             $hostData = $this->UserAuth_model->getById($p['host_id']);
             //split payment to property manager
+            $this->load->model('UserWallet_model');
+            $this->load->model('UserWalletTransaction_model');
             $this->UserWallet_model->saveData(['user_auth_id' => $hostData['id'], 'available_amount' => $p['agreed_amount'], 'ledger_amount' => $p['agreed_amount']]);
             $this->UserWalletTransaction_model->saveData(['user_auth_id' => $hostData['id'], 'amount' => $p['agreed_amount'], 'note' => 'Rent from property#' . $p['property_id']]);
 
             if (!empty($hostData['referral_code'])) {
                 echo '<br>A referral found:';
                 print_r($hostData);
-                $this->load->model('UserWallet_model');
-                $this->load->model('UserWalletTransaction_model');
                 //get host referrer data
                 $hostReferrerData =  $this->UserAuth_model->getByUsername($hostData['referral_code']);
                 $hostReferrerCommission = (0.1 * $rtAgencyCommission) + (0.1 * $rtManagementCommission);
                 //update wallet
-                $this->load->model('UserWallet_model');
+                
                 $this->UserWallet_model->saveData(['user_auth_id' => $hostReferrerData['id'], 'available_amount' => $hostReferrerCommission, 'ledger_amount' => $hostReferrerCommission]);
                 $this->UserWalletTransaction_model->saveData(['user_auth_id' => $hostReferrerData['id'], 'amount' => $hostReferrerCommission, 'note' => 'Commission from property#' . $p['property_id']]);
             }
