@@ -132,5 +132,12 @@ class Bg extends CI_Controller
             //Update inspection booking
             $this->InspectionBooking_model->updateById(['split_processed' => 1], $p['id']);
         }
+
+    }
+
+    public function test($name){
+        $this->load->model('UserAuth_model');
+        $hostReferrerData =  $this->UserAuth_model->getByUsername($name);
+        print_r($hostReferrerData);
     }
 }
