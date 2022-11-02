@@ -117,12 +117,14 @@ class Bg extends CI_Controller
 
             if (!empty($hostData['referral_code'])) {
                 echo '<br>A referral found:';
+                echo '<br>Host Data:';
                 print_r($hostData);
                 //get host referrer data
                 $hostReferrerData =  $this->UserAuth_model->getByUsername($hostData['referral_code']);
+                echo '<br>Referrer Data:';
+                print_r($hostReferrerData);
                 $hostReferrerCommission = (0.1 * $rtAgencyCommission) + (0.1 * $rtManagementCommission);
                 //update wallet
-                
                 $this->UserWallet_model->saveData(['user_auth_id' => $hostReferrerData['id'], 'available_amount' => $hostReferrerCommission, 'ledger_amount' => $hostReferrerCommission]);
                 $this->UserWalletTransaction_model->saveData(['user_auth_id' => $hostReferrerData['id'], 'amount' => $hostReferrerCommission, 'note' => 'Commission from property#' . $p['property_id']]);
             }
