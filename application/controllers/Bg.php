@@ -100,17 +100,18 @@ class Bg extends CI_Controller
         foreach ($pendingSplitFee as $p) {
             print_r($p);
             //Do the calculation
-            $rtAgencyCommission = 0.1 * $p['agent_fee']; //10% of rent
+            $rtAgencyCommission = 0.25 * $p['agent_fee']; //25% of agency fee
             $rtLegalCommission = 0.1 * $p['legal_fee'];
-            $rtManagementCommission = 0.1 * $p['management_fee'];
+            $rtManagementCommission = 0.1 * $p['management_fee']; //management fee only available for renewal
             $rtTotalCommission = $rtAgencyCommission + $rtLegalCommission + $rtManagementCommission + $p['caution_fee'];
+            echo "<br>RT commission breakdown - agency: $rtAgencyCommission, legal: $rtLegalCommission, management: $rtManagementCommission, caution: {$p['caution_fee']}, Total: $rtTotalCommission";
             $this->load->model('AdminEarning_model');
             $this->AdminEarning_model->saveData(['property_id' => $p['property_id'], 'agent_fee' => $rtAgencyCommission, 'legal_fee' =>  $rtLegalCommission, 'management_fee' => $rtManagementCommission, 'caution_fee' => $p['caution_fee'], 'total' => $rtTotalCommission]);
             //get host referrer
             $hostData = $this->UserAuth_model->getById($p['host_id']);
             //split payment to property manager
             $this->UserWallet_model->saveData(['user_auth_id' => $hostData['id'], 'available_amount' => $p['agreed_amount'], 'ledger_amount' => $p['agreed_amount']]);
-                $this->UserWalletTransaction_model->saveData(['user_auth_id' => $hostData['id'], 'amount' => $p['agreed_amount'], 'note' => 'Rent from property#' . $p['property_id']]);
+            $this->UserWalletTransaction_model->saveData(['user_auth_id' => $hostData['id'], 'amount' => $p['agreed_amount'], 'note' => 'Rent from property#' . $p['property_id']]);
 
             if (!empty($hostData['referral_code'])) {
                 echo '<br>A referral found:';
