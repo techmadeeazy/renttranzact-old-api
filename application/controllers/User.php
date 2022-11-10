@@ -267,7 +267,7 @@ class User extends REST_Controller
                 $propertyData = $this->Property_model->getById($bookingData['property_id']);
                 $managementFeePercent = $propertyData['management_fee_percent'] > 0 ? $propertyData['management_fee_percent'] / 100 : 0.1;
                 //approve with caution fee and agreed amount
-                $updateData = ['management_fee' => ($this->post('agreed_amount') * $managementFeePercent), 'legal_fee' => ($bookingData['agreed_amount'] * 0.1), 'agent_fee' => ($this->post('agreed_amount') * 0.1), 'caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment', 'payment_deadline' => $this->post('payment_deadline')];
+                $updateData = ['legal_fee' => ($bookingData['agreed_amount'] * 0.1), 'agent_fee' => ($this->post('agreed_amount') * 0.1), 'caution_fee' => $this->post('caution_fee'), 'agreed_amount' => $this->post('agreed_amount'), 'status' => 'approve_payment', 'payment_deadline' => $this->post('payment_deadline')];
                 $updateData['start_date'] = $this->post('start_date') && strtotime($this->post('start_date')) ? date('Y-m-d', strtotime($this->post('start_date'))) : $bookingData['start_date'];
                 $updateData['end_date'] = $this->post('end_date') && strtotime($this->post('end_date')) ? date('Y-m-d', strtotime($this->post('end_date'))) : $bookingData['end_date'];
 
