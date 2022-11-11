@@ -73,7 +73,10 @@ class Payment extends REST_Controller
         }
         $this->response(['status' => 'fail', 'message' => 'Please login']);
     }
-
+    
+    /**
+     * Returns breakdown of rent payment - agreed_amount, agent_fee, legal_fee
+     */
     public function init_get($bookingId)
     {
         $this->load->model('InspectionBooking_model');
